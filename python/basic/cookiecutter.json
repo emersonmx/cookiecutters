@@ -1,0 +1,7 @@
+{
+    "project_slug": "basic_project",
+    "install_code_tools": "y",
+    "install_test_tools": "y",
+    "install_debug_tools": "y",
+    "install_tasks_tools": "y"
+}

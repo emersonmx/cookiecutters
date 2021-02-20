@@ -1,0 +1,24 @@
+{%- if cookiecutter.install_code_tools == "y" -%}
+[tool.black]
+line-length = 80
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 80
+multi_line_output = 3
+{%- endif -%}
