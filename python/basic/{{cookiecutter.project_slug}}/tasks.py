@@ -11,6 +11,13 @@ def format(c):
 
 
 @task
+def check_format(c):
+    # type: (Context) -> None
+    c.run("black --check .")
+    c.run("isort --check .")
+
+
+@task
 def lint(c):
     # type: (Context) -> None
     c.run("flake8 .")
@@ -32,4 +39,13 @@ def tests(c):
 def coverage(c):
     # type: (Context) -> None
     c.run("coverage report")
+{%- endif -%}
+
+{%- if cookiecutter.install_code_tools == "y" and cookiecutter.install_test_tools == "y" %}
+
+
+@task(check_format, lint, tests, coverage)
+def check(c):
+    # type: (Context) -> None
+    pass
 {%- endif -%}
