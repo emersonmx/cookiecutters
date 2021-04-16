@@ -3,7 +3,7 @@ from invoke.context import Context
 
 
 {% if cookiecutter.install_code_tools == "y" -%}
-@task
+@task(aliases=["fmt"])
 def format(c):
     # type: (Context) -> None
     c.run("black .")
