@@ -1,7 +1,6 @@
 import os
 import shutil
 import sys
-import pathlib
 
 dependency_manager = "poetry"
 if not shutil.which(dependency_manager):
