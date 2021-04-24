@@ -21,7 +21,7 @@ def check_format(c):
 def lint(c):
     # type: (Context) -> None
     c.run("flake8 .")
-    c.run("mypy .")
+    c.run("dmypy run .")
 {%- endif -%}
 
 {% if cookiecutter.install_test_tools == "y" -%}
