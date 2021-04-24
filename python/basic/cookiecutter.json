@@ -1,5 +1,6 @@
 {
     "project_slug": "basic_project",
+    "python_version": "3.9",
     "install_code_tools": "y",
     "install_test_tools": "y",
     "install_debug_tools": "y",

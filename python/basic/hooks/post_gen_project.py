@@ -2,6 +2,7 @@ import os
 import shutil
 import sys
 
+python_version = "{{ cookiecutter.python_version }}"
 dependency_manager = "poetry"
 if not shutil.which(dependency_manager):
     print(f"ERROR: {dependency_manager} not found")
@@ -21,9 +22,9 @@ tools = {
     "tasks": ["invoke"],
 }
 
-init_command = f"{dependency_manager} init -n"
+init_command = f"{dependency_manager} init -n --python {python_version}"
 install_command = f"{dependency_manager} add --dev"
-format_command = f"{dependency_manager} add --dev"
+format_command = f"{dependency_manager} run black ."
 
 if install["tasks"] != "y":
     os.remove("tasks.py")
@@ -45,3 +46,6 @@ for tool, can_install in install.items():
 
 if tools_to_install:
     os.system(f"{install_command} {' '.join(tools_to_install)}")
+
+if install["code"]:
+    os.system(format_command)
