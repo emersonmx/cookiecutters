@@ -22,7 +22,7 @@ tools = {
     "tasks": ["invoke"],
 }
 
-init_command = f"{dependency_manager} init -n --python {python_version}"
+init_command = f"{dependency_manager} init -n"
 install_command = f"{dependency_manager} add --dev"
 format_command = f"{dependency_manager} run black ."
 
