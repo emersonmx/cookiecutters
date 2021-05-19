@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-
-
 def main() -> None:
     print("Hello World!")
 

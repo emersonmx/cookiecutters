@@ -2,6 +2,12 @@ from invoke import task
 from invoke.context import Context
 
 
+@task
+def run(c):
+    # type: (Context) -> None
+    c.run("python src/main.py")
+
+
 {% if cookiecutter.install_code_tools == "y" -%}
 @task(aliases=["fmt"])
 def format(c):
