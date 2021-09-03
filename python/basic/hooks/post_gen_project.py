@@ -17,8 +17,8 @@ class Poetry:
 
     def add(self, packages: list[str], dependency_type: str = "") -> None:
         cmd = [self.binary_name, "add"]
-        if dependency_type:
-            cmd.append(dependency_type)
+        if dependency_type == "dev":
+            cmd.append("-D")
         subprocess.run(cmd + packages)
 
     def run(self, command: list[str]) -> None:
@@ -33,14 +33,16 @@ with open("base_pyproject.toml") as f:
     base_pyproject_data = f.read().strip()
 with open("pyproject.toml", "a+") as f:
     if base_pyproject_data:
-        f.write("\n" + base_pyproject_data)
+        f.write("\n" + base_pyproject_data + "\n")
 os.remove("base_pyproject.toml")
 
 packages = [
     # formatting
+    "add-trailing-comma",
     "black",
     "isort",
     # linting
+    "types-all",
     "flake8",
     "flake8-print",
     "pep8-naming",
@@ -55,12 +57,18 @@ packages = [
     "ipdb",
     # make
     "invoke",
+    # misc
+    "pre-commit",
 ]
 
-poetry.add(packages, "-D")
-poetry.run(["invoke", "format"])
+poetry.add(packages, "dev")
 
 subprocess.run(["git", "init"])
+subprocess.run(["poetry", "run", "pre-commit", "install"])
+subprocess.run(
+    ["poetry", "run", "pre-commit", "autoupdate"],
+    stdout=subprocess.DEVNULL,
+)
 
 gitignore_url = "https://www.toptal.com/developers/gitignore/api/python"
 headers = {"user-agent": "Mozilla/5.0"}

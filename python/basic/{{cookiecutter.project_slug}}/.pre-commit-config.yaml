@@ -1,0 +1,42 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: master
+    hooks:
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: master
+    hooks:
+      - id: add-trailing-comma
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: master
+    hooks:
+      - id: isort
+  - repo: https://github.com/psf/black
+    rev: main
+    hooks:
+      - id: black
+  - repo: https://github.com/pycqa/flake8
+    rev: master
+    hooks:
+      - id: flake8
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: master
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-all]
+  - repo: https://github.com/jendrikseipp/vulture
+    rev: master
+    hooks:
+      - id: vulture
+        args: ["src/"]
+  - repo: https://github.com/PyCQA/bandit
+    rev: master
+    hooks:
+      - id: bandit
+        entry: bandit -r
+        files: "src/"
