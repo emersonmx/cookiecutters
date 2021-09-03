@@ -9,27 +9,45 @@ def run(c):
 
 
 @task(aliases=["fmt"])
-def format(c):
-    # type: (Context) -> None
+def format(c, all_files=False):
+    # type: (Context, bool) -> None
     c.config["run"]["pty"] = True
-    c.run("pre-commit run isort")
-    c.run("pre-commit run black")
+    if all_files:
+        c.run("pre-commit run --all-files pyupgrade")
+        c.run("pre-commit run --all-files add-trailing-comma")
+        c.run("pre-commit run --all-files isort")
+        c.run("pre-commit run --all-files black")
+    else:
+        c.run("pre-commit run pyupgrade")
+        c.run("pre-commit run add-trailing-comma")
+        c.run("pre-commit run isort")
+        c.run("pre-commit run black")
 
 
 @task
-def lint(c):
-    # type: (Context) -> None
+def lint(c, all_files=False):
+    # type: (Context, bool) -> None
     c.config["run"]["pty"] = True
-    c.run("pre-commit run flake8")
-    c.run("pre-commit run mypy")
-    c.run("pre-commit run vulture")
-    c.run("pre-commit run bandit")
+    if all_files:
+        c.run("pre-commit run --all-files flake8")
+        c.run("pre-commit run --all-files mypy")
+        c.run("pre-commit run --all-files vulture")
+        c.run("pre-commit run --all-files bandit")
+    else:
+        c.run("pre-commit run flake8")
+        c.run("pre-commit run mypy")
+        c.run("pre-commit run vulture")
+        c.run("pre-commit run bandit")
 
 
 @task
-def check(c):
-    # type: (Context) -> None
-    c.run("pre-commit run --all-files", pty=True)
+def check(c, all_files=False):
+    # type: (Context, bool) -> None
+    c.config["run"]["pty"] = True
+    if all_files:
+        c.run("pre-commit run --all-files")
+    else:
+        c.run("pre-commit run")
 
 
 @task
