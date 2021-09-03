@@ -1,0 +1,19 @@
+[tool.black]
+line-length = 80
+
+[tool.isort]
+profile = "black"
+line_length = 80
+multi_line_output = 3
+
+[tool.mypy]
+allow_redefinition = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "invoke.*"
+ignore_missing_imports = true
+
+[tool.vulture]
+min_confidence = 100
