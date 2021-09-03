@@ -1,5 +1,7 @@
 import os
 import shutil
+import subprocess
+import urllib.request
 
 
 class Poetry:
@@ -9,20 +11,22 @@ class Poetry:
             raise RuntimeError("Poetry not found")
 
     def init(self, python_version: str) -> None:
-        os.system(f"{self.binary_name} init -n --python {python_version}")
+        subprocess.run(
+            [self.binary_name, "init", "-n", "--python", python_version]
+        )
 
     def add(self, packages: list[str], dependency_type: str = "") -> None:
-        packages_str = " ".join(packages)
-        os.system(f"{self.binary_name} add {dependency_type} {packages_str}")
+        cmd = [self.binary_name, "add"]
+        if dependency_type:
+            cmd.append(dependency_type)
+        subprocess.run(cmd + packages)
 
-    def run(self, command: str) -> None:
-        os.system(f"{self.binary_name} run {command}")
+    def run(self, command: list[str]) -> None:
+        subprocess.run([self.binary_name, "run", *command])
 
-
-python_version = "{{ cookiecutter.python_version }}"
 
 poetry = Poetry()
-poetry.init(python_version)
+poetry.init("{{ cookiecutter.python_version }}")
 
 base_pyproject_data = ""
 with open("base_pyproject.toml") as f:
@@ -36,7 +40,6 @@ packages = [
     # formatting
     "black",
     "isort",
-
     # linting
     "flake8",
     "flake8-print",
@@ -44,18 +47,28 @@ packages = [
     "mypy",
     "vulture",
     "bandit",
-
     # testing
     "pytest",
     "pytest-asyncio",
     "coverage",
-
     # debug
     "ipdb",
-
     # make
     "invoke",
 ]
 
 poetry.add(packages, "-D")
-poetry.run("invoke format")
+poetry.run(["invoke", "format"])
+
+subprocess.run(["git", "init"])
+
+gitignore_url = "https://www.toptal.com/developers/gitignore/api/python"
+headers = {"user-agent": "Mozilla/5.0"}
+request = urllib.request.Request(gitignore_url, headers=headers)
+with urllib.request.urlopen(request) as response:
+    data = response.read()
+    with open(".gitignore", "w+") as f:
+        f.write(data.decode())
+
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", "Start project"])
