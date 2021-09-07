@@ -10,9 +10,9 @@ class Poetry:
         if not shutil.which(self.binary_name):
             raise RuntimeError("Poetry not found")
 
-    def init(self, python_version: str) -> None:
+    def init(self) -> None:
         subprocess.run(
-            [self.binary_name, "init", "-n", "--python", python_version]
+            [self.binary_name, "init", "-n", "--python", "^3.9"]
         )
 
     def add(self, packages: list[str], dependency_type: str = "") -> None:
@@ -26,7 +26,7 @@ class Poetry:
 
 
 poetry = Poetry()
-poetry.init("{{ cookiecutter.python_version }}")
+poetry.init()
 
 base_pyproject_data = ""
 with open("base_pyproject.toml") as f:

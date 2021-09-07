@@ -12,7 +12,7 @@ repos:
     rev: master
     hooks:
       - id: pyupgrade
-        args: ["--py3-plus"]
+        args: ["--py39-plus"]
   - repo: https://github.com/asottile/add-trailing-comma
     rev: master
     hooks:
