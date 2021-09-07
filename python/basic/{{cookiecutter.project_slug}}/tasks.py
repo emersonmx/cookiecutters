@@ -12,42 +12,38 @@ def run(c):
 def format(c, all_files=False):
     # type: (Context, bool) -> None
     c.config["run"]["pty"] = True
-    if all_files:
-        c.run("pre-commit run --all-files pyupgrade")
-        c.run("pre-commit run --all-files add-trailing-comma")
-        c.run("pre-commit run --all-files isort")
-        c.run("pre-commit run --all-files black")
-    else:
-        c.run("pre-commit run pyupgrade")
-        c.run("pre-commit run add-trailing-comma")
-        c.run("pre-commit run isort")
-        c.run("pre-commit run black")
+    hooks = [
+        "pyupgrade",
+        "add-trailing-comma",
+        "isort",
+        "black",
+    ]
+    cmd = "pre-commit run --all-files" if all_files else "pre-commit run"
+    for hook in hooks:
+        c.run(f"{cmd} {hook}")
 
 
 @task
 def lint(c, all_files=False):
     # type: (Context, bool) -> None
     c.config["run"]["pty"] = True
-    if all_files:
-        c.run("pre-commit run --all-files flake8")
-        c.run("pre-commit run --all-files mypy")
-        c.run("pre-commit run --all-files vulture")
-        c.run("pre-commit run --all-files bandit")
-    else:
-        c.run("pre-commit run flake8")
-        c.run("pre-commit run mypy")
-        c.run("pre-commit run vulture")
-        c.run("pre-commit run bandit")
+    hooks = [
+        "flake8",
+        "mypy",
+        "vulture",
+        "bandit",
+    ]
+    cmd = "pre-commit run --all-files" if all_files else "pre-commit run"
+    for hook in hooks:
+        c.run(f"{cmd} {hook}")
 
 
 @task
 def check(c, all_files=False):
     # type: (Context, bool) -> None
     c.config["run"]["pty"] = True
-    if all_files:
-        c.run("pre-commit run --all-files")
-    else:
-        c.run("pre-commit run")
+    cmd = "pre-commit run --all-files" if all_files else "pre-commit run"
+    c.run(cmd)
 
 
 @task
