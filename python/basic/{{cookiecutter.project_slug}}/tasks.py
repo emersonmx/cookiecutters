@@ -15,6 +15,7 @@ def format(c, all_files=False):
     hooks = [
         "pyupgrade",
         "add-trailing-comma",
+        "yesqa",
         "isort",
         "black",
     ]
