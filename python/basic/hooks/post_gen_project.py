@@ -1,6 +1,5 @@
 import os
 from subprocess import run, DEVNULL
-from urllib.request import urlopen, Request
 
 run(["poetry", "init", "-n", "--python", "^3.9"])
 
@@ -39,16 +38,19 @@ packages = [
 run(["poetry", "add", "-D", *packages])
 
 run(["git", "init"])
+
 run(["poetry", "run", "pre-commit", "install"])
 run(["poetry", "run", "pre-commit", "autoupdate"], stdout=DEVNULL)
 
-gitignore_url = "https://www.toptal.com/developers/gitignore/api/python"
-headers = {"user-agent": "Mozilla/5.0"}
-request = Request(gitignore_url, headers=headers)
-with urlopen(request) as response:
-    data = response.read()
-    with open(".gitignore", "w+") as f:
-        f.write(data.decode())
+run(
+    [
+        "curl",
+        "--location",
+        "--output",
+        ".gitignore",
+        "https://www.toptal.com/developers/gitignore/api/python",
+    ]
+)
 
 run(["git", "add", "."])
 run(["git", "commit", "-m", "Start project"])
