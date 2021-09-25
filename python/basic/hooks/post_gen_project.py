@@ -1,32 +1,8 @@
 import os
-import shutil
-import subprocess
-import urllib.request
+from subprocess import run, DEVNULL
+from urllib.request import urlopen, Request
 
-
-class Poetry:
-    def __init__(self) -> None:
-        self.binary_name = "poetry"
-        if not shutil.which(self.binary_name):
-            raise RuntimeError("Poetry not found")
-
-    def init(self) -> None:
-        subprocess.run(
-            [self.binary_name, "init", "-n", "--python", "^3.9"]
-        )
-
-    def add(self, packages: list[str], dependency_type: str = "") -> None:
-        cmd = [self.binary_name, "add"]
-        if dependency_type == "dev":
-            cmd.append("-D")
-        subprocess.run(cmd + packages)
-
-    def run(self, command: list[str]) -> None:
-        subprocess.run([self.binary_name, "run", *command])
-
-
-poetry = Poetry()
-poetry.init()
+run(["poetry", "init", "-n", "--python", "^3.9"])
 
 base_pyproject_data = ""
 with open("base_pyproject.toml") as f:
@@ -60,23 +36,19 @@ packages = [
     # misc
     "pre-commit",
 ]
+run(["poetry", "add", "-D", *packages])
 
-poetry.add(packages, "dev")
-
-subprocess.run(["git", "init"])
-subprocess.run(["poetry", "run", "pre-commit", "install"])
-subprocess.run(
-    ["poetry", "run", "pre-commit", "autoupdate"],
-    stdout=subprocess.DEVNULL,
-)
+run(["git", "init"])
+run(["poetry", "run", "pre-commit", "install"])
+run(["poetry", "run", "pre-commit", "autoupdate"], stdout=DEVNULL)
 
 gitignore_url = "https://www.toptal.com/developers/gitignore/api/python"
 headers = {"user-agent": "Mozilla/5.0"}
-request = urllib.request.Request(gitignore_url, headers=headers)
-with urllib.request.urlopen(request) as response:
+request = Request(gitignore_url, headers=headers)
+with urlopen(request) as response:
     data = response.read()
     with open(".gitignore", "w+") as f:
         f.write(data.decode())
 
-subprocess.run(["git", "add", "."])
-subprocess.run(["git", "commit", "-m", "Start project"])
+run(["git", "add", "."])
+run(["git", "commit", "-m", "Start project"])
