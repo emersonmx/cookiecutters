@@ -26,7 +26,7 @@ packages=(
     # misc
     pre-commit
 )
-poetry add -D $packages
+poetry add -D ${packages[@]}
 
 mv pyproject.toml base_pyproject.toml
 cat base_pyproject.toml tools_pyproject.toml > pyproject.toml
