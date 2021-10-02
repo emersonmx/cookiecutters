@@ -1,5 +1,4 @@
-from invoke import task
-from invoke.context import Context
+from invoke import Context, task
 
 
 @task
