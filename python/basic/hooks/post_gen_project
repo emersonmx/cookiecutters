@@ -1,6 +1,6 @@
 #!/bin/bash
 
-poetry init -n --python '^3.9'
+poetry init -n --python '^3.10'
 
 packages=(
     # formatting
