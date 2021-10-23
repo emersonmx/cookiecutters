@@ -25,6 +25,7 @@ packages=(
     invoke
     # misc
     pre-commit
+    rope
 )
 poetry add -D ${packages[@]}
 
