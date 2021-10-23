@@ -34,6 +34,10 @@ disallow_untyped_decorators = false
 module = "invoke.*"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_decorators = false
+
 [tool.vulture]
 min_confidence = 100
 
