@@ -4,13 +4,17 @@ from invoke import Context, task
 @task
 def run(c):
     # type: (Context) -> None
-    c.run("python src/main.py")
+    c.run("python src/main.py", pty=True)
 
 
 @task(aliases=["fmt"])
 def format(c, all_files=False):
     # type: (Context, bool) -> None
-    c.config["run"]["pty"] = True
+    precommit_options = []
+
+    if all_files:
+        precommit_options.append("--all-files")
+
     hooks = [
         "pyupgrade",
         "add-trailing-comma",
@@ -18,37 +22,50 @@ def format(c, all_files=False):
         "isort",
         "black",
     ]
-    cmd = "pre-commit run --all-files" if all_files else "pre-commit run"
     for hook in hooks:
-        c.run(f"{cmd} {hook}")
+        cmd = " ".join(["pre-commit", "run", *precommit_options, hook])
+        c.run(cmd, pty=True)
 
 
 @task
 def lint(c, all_files=False):
     # type: (Context, bool) -> None
-    c.config["run"]["pty"] = True
+    precommit_options = []
+
+    if all_files:
+        precommit_options.append("--all-files")
+
     hooks = [
         "flake8",
         "mypy",
         "vulture",
         "bandit",
     ]
-    cmd = "pre-commit run --all-files" if all_files else "pre-commit run"
     for hook in hooks:
-        c.run(f"{cmd} {hook}")
+        cmd = " ".join(["pre-commit", "run", *precommit_options, hook])
+        c.run(cmd, pty=True)
 
 
 @task
 def check(c, all_files=False):
     # type: (Context, bool) -> None
-    c.config["run"]["pty"] = True
-    cmd = "pre-commit run --all-files" if all_files else "pre-commit run"
-    c.run(cmd)
+    precommit_options = []
+
+    if all_files:
+        precommit_options.append("--all-files")
+
+    cmd = " ".join(["pre-commit", "run", *precommit_options])
+    c.run(cmd, pty=True)
 
 
 @task
-def tests(c):
-    # type: (Context) -> None
+def tests(c, quiet=False):
+    # type: (Context, bool) -> None
+    pytest_options: list[str] = []
+
+    if quiet:
+        pytest_options.append("-q")
+
     cmd = " ".join(
         [
             "PYTHONPATH=src/",
@@ -56,6 +73,7 @@ def tests(c):
             "run",
             "-m",
             "pytest",
+            *pytest_options,
             "tests/",
         ],
     )
