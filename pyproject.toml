@@ -1,0 +1,80 @@
+[tool.poetry]
+name = "cookiecutters"
+version = "0.1.0"
+description = ""
+authors = ["Emerson Max de Medeiros Silva <emerson.silva@invillia.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.dev-dependencies]
+add-trailing-comma = "^2.2.1"
+black = "^21.11b1"
+isort = "^5.10.1"
+types-all = "^1.0.0"
+flake8 = "^4.0.1"
+flake8-print = "^4.0.0"
+pep8-naming = "^0.12.1"
+mypy = "^0.910"
+vulture = "^2.3"
+bandit = "^1.7.1"
+pytest = "^6.2.5"
+pytest-asyncio = "^0.16.0"
+coverage = "^6.1.2"
+ipdb = "^0.13.9"
+invoke = "^1.6.0"
+pre-commit = "^2.15.0"
+rope = "^0.22.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
+
+[tool.isort]
+profile = "black"
+line_length = 80
+multi_line_output = 3
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_any_unimported = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+implicit_reexport = true
+no_implicit_optional = true
+show_error_codes = true
+strict_equality = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "tasks"
+disallow_any_unimported = false
+disallow_untyped_decorators = false
+
+[[tool.mypy.overrides]]
+module = "invoke.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_any_unimported = false
+disallow_untyped_decorators = false
+
+[tool.vulture]
+min_confidence = 100
+
+[tool.coverage.run]
+branch = true
+source = ["src/"]
+
+[tool.coverage.report]
+fail_under = 100
