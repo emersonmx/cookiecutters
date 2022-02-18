@@ -74,7 +74,6 @@ def tests(c, quiet=False):
             "-m",
             "pytest",
             *pytest_options,
-            "tests/",
         ],
     )
     c.run(cmd, pty=True)
