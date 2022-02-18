@@ -7,6 +7,7 @@ repos:
       - id: debug-statements
       - id: detect-private-key
       - id: end-of-file-fixer
+      - id: name-tests-test
       - id: trailing-whitespace
   - repo: https://github.com/asottile/pyupgrade
     rev: master
