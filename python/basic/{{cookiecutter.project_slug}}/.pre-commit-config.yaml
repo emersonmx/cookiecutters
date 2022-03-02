@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: master
+    rev: ""
     hooks:
       - id: check-added-large-files
       - id: check-merge-conflict
@@ -10,20 +10,20 @@ repos:
       - id: name-tests-test
       - id: trailing-whitespace
   - repo: https://github.com/asottile/pyupgrade
-    rev: master
+    rev: ""
     hooks:
       - id: pyupgrade
         args: ["--py310-plus"]
   - repo: https://github.com/asottile/add-trailing-comma
-    rev: master
+    rev: ""
     hooks:
       - id: add-trailing-comma
   - repo: https://github.com/asottile/yesqa
-    rev: master
+    rev: ""
     hooks:
     - id: yesqa
   - repo: https://github.com/pre-commit/mirrors-isort
-    rev: master
+    rev: ""
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
@@ -31,21 +31,21 @@ repos:
     hooks:
       - id: black
   - repo: https://github.com/pycqa/flake8
-    rev: master
+    rev: ""
     hooks:
       - id: flake8
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: master
+    rev: ""
     hooks:
       - id: mypy
         additional_dependencies: [types-all]
   - repo: https://github.com/jendrikseipp/vulture
-    rev: master
+    rev: ""
     hooks:
       - id: vulture
         args: ["src/"]
   - repo: https://github.com/PyCQA/bandit
-    rev: master
+    rev: ""
     hooks:
       - id: bandit
         entry: bandit -r

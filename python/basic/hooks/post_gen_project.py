@@ -1,6 +1,8 @@
 import os
 from subprocess import DEVNULL, CalledProcessError, run
 
+import requests
+
 PACKAGES = [
     # formatting
     "add-trailing-comma",
@@ -50,15 +52,12 @@ def _setup_pre_commit() -> None:
 
 
 def _setup_gitignore() -> None:
-    from urllib.request import Request, urlopen
-
     gitignore_url = "https://www.toptal.com/developers/gitignore/api/python"
-    headers = {"user-agent": "Mozilla/5.0"}
-    request = Request(gitignore_url, headers=headers)
-    with urlopen(request) as response:
-        data = response.read()
-        with open(".gitignore", "w+") as f:
-            f.write(data.decode())
+    response = requests.get(gitignore_url)
+    response.raise_for_status()
+    data = response.text
+    with open(".gitignore", "w+") as f:
+        f.write(data)
 
 
 def setup_project() -> None:
