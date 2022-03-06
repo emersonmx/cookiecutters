@@ -26,7 +26,6 @@ PACKAGES = [
     "invoke",
     # misc
     "pre-commit",
-    "rope",
 ]
 
 
