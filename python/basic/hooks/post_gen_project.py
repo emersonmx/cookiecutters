@@ -19,6 +19,7 @@ PACKAGES = [
     # testing
     "pytest",
     "pytest-asyncio",
+    "hypothesis",
     "coverage",
     # debug
     "ipdb",
