@@ -18,7 +18,6 @@ PACKAGES = [
     "bandit",
     # testing
     "pytest",
-    "pytest-asyncio",
     "hypothesis",
     "coverage",
     # debug
