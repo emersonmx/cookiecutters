@@ -5,8 +5,8 @@
 cookiecutter \
   --no-input \
   -f \
-  -o ../ \
+  -o $(dirname $PWD) \
   https://github.com/emersonmx/cookiecutters --directory=direnv/poetry \
-  path=$(pwd)
+  path=$PWD
 ```
 
