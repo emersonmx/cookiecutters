@@ -4,28 +4,27 @@ from subprocess import DEVNULL, CalledProcessError, run
 import requests
 
 PACKAGES = [
-    # formatting
+    # tools
+    "pytest",
+    "hypothesis",
+    "coverage",
+    "ipdb",
+    "invoke",
+    "pre-commit",
+    # code quality
+    "pyupgrade",
     "add-trailing-comma",
-    "black",
+    "yesqa",
     "isort",
-    # linting
-    "types-all",
+    "black",
     "flake8",
     "flake8-print",
     "pep8-naming",
     "mypy",
     "vulture",
     "bandit",
-    # testing
-    "pytest",
-    "hypothesis",
-    "coverage",
-    # debug
-    "ipdb",
-    # make
-    "invoke",
-    # misc
-    "pre-commit",
+    # stubs
+    "types-all",
 ]
 
 
