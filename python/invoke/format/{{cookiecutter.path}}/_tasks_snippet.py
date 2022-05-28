@@ -2,8 +2,8 @@ from invoke import Context, task
 
 
 @task(aliases=("fmt",))
+{%- if cookiecutter.use_pre_commit == "true" %}
 def format(c, all_files=False):
-    {%- if cookiecutter.use_pre_commit %}
     # type: (Context, bool) -> None
     precommit_options = []
 
@@ -23,6 +23,8 @@ def format(c, all_files=False):
         cmd = " ".join(["pre-commit", "run", *precommit_options, hook])
         c.run(cmd, pty=True)
     {%- else %}
+def format(c):
+    # type: (Context) -> None
     c.run("isort .")
     c.run("black .")
     {%- endif %}
