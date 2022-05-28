@@ -16,6 +16,8 @@ def format(c, all_files=False):
         precommit_options.append("--all-files")
 
     hooks = [
+        "end-of-file-fixer",
+        "trailing-whitespace",
         "pyupgrade",
         "add-trailing-comma",
         "yesqa",
@@ -36,6 +38,11 @@ def lint(c, all_files=False):
         precommit_options.append("--all-files")
 
     hooks = [
+        "check-added-large-files",
+        "check-merge-conflict",
+        "debug-statements",
+        "detect-private-key",
+        "name-tests-test",
         "flake8",
         "mypy",
         "vulture",
