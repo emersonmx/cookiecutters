@@ -30,15 +30,22 @@ repos:
     rev: main
     hooks:
       - id: black
-  - repo: https://github.com/pycqa/flake8
-    rev: ""
+  - repo: local
     hooks:
       - id: flake8
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: ""
+        name: flake8
+        entry: flake8
+        language: python
+        types: [python]
+        require_serial: true
+  - repo: local
     hooks:
       - id: mypy
-        additional_dependencies: [types-all]
+        name: mypy
+        entry: mypy
+        language: system
+        types_or: [python, pyi]
+        args: ["--ignore-missing-imports", "--scripts-are-modules"]
   - repo: https://github.com/jendrikseipp/vulture
     rev: ""
     hooks:
