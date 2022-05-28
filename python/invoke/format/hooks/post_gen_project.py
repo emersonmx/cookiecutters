@@ -5,13 +5,13 @@ from subprocess import CalledProcessError
 def apply_snippet() -> None:
     snippet_path = Path("_tasks_snippet.py")
     with open(snippet_path, "r") as f:
-        task_snippet = f.readlines()
+        snippet = f.readlines()
 
     tasks_path = Path("tasks.py")
     if tasks_path.exists():
-        task_snippet.pop(0)
+        snippet.pop(0)
     with open(tasks_path, "a") as f:
-        f.writelines(task_snippet)
+        f.writelines(snippet)
 
     snippet_path.unlink()
 
