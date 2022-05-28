@@ -1,11 +1,11 @@
 
-[tool.black]
-line-length = 80
-
 [tool.isort]
 profile = "black"
 line_length = 80
 multi_line_output = 3
+
+[tool.black]
+line-length = 80
 
 [tool.mypy]
 check_untyped_defs = true
@@ -38,14 +38,12 @@ module = "tests.*"
 disallow_any_unimported = false
 disallow_untyped_decorators = false
 
-[tool.pytest.ini_options]
-asyncio_mode = "auto"
-testpaths = [
-    "tests",
-]
-
 [tool.vulture]
 min_confidence = 100
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
 
 [tool.coverage.run]
 branch = true
