@@ -10,18 +10,19 @@ line-length = 80
 [tool.mypy]
 check_untyped_defs = true
 disallow_any_generics = true
-disallow_any_unimported = true
 disallow_incomplete_defs = true
 disallow_subclassing_any = true
 disallow_untyped_calls = true
 disallow_untyped_decorators = true
 disallow_untyped_defs = true
-implicit_reexport = true
+implicit_reexport = false
 no_implicit_optional = true
 show_error_codes = true
+strict_concatenate = true
 strict_equality = true
 warn_redundant_casts = true
 warn_return_any = true
+warn_unused_configs = true
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
@@ -42,12 +43,11 @@ disallow_untyped_decorators = false
 min_confidence = 100
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
 testpaths = ["tests"]
 
 [tool.coverage.run]
 branch = true
-source = ["src/"]
+source = ["{{ cookiecutter.project_slug}}/"]
 
 [tool.coverage.report]
 fail_under = 100

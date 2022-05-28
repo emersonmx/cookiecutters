@@ -4,7 +4,7 @@ from invoke import Context, task
 @task
 def run(c):
     # type: (Context) -> None
-    c.run("python src/main.py", pty=True)
+    c.run("python {{ cookiecutter.project_slug }}/main.py", pty=True)
 
 
 @task(aliases=["fmt"])
@@ -68,7 +68,6 @@ def tests(c, quiet=False):
 
     cmd = " ".join(
         [
-            "PYTHONPATH=src/",
             "coverage",
             "run",
             "-m",

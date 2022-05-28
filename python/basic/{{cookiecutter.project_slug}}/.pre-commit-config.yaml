@@ -58,11 +58,11 @@ repos:
     rev: ""
     hooks:
       - id: vulture
-        args: ["src/"]
+        args: ["{{ cookiecutter.project_slug }}/"]
 
   - repo: https://github.com/PyCQA/bandit
     rev: ""
     hooks:
       - id: bandit
         entry: bandit -r
-        files: "src/"
+        files: "{{ cookiecutter.project_slug }}/"
