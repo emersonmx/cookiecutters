@@ -1,0 +1,2 @@
+[tool.vulture]
+min_confidence = 100
