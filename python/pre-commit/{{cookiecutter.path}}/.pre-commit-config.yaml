@@ -50,9 +50,10 @@ repos:
       - id: mypy
         name: mypy
         entry: mypy
-        language: system
+        language: python
         types_or: [python, pyi]
         args: ["--ignore-missing-imports", "--scripts-are-modules"]
+        require_serial: true
 
   - repo: https://github.com/jendrikseipp/vulture
     rev: ""
