@@ -6,13 +6,17 @@ RUN python -m venv /code/venv
 ENV PATH=/code/venv/bin:$PATH
 
 COPY requirements.txt .
+{%- if cookiecutter.require_hashes == "y" %}
 RUN pip install --require-hashes -r requirements.txt
+{%- else %}
+RUN pip install -r requirements.txt
+{%- endif %}
 
 
 FROM python:{{ cookiecutter.docker_image_tag }}
 
-RUN useradd --create-home appuser
-USER appuser
+RUN useradd --create-home {{ cookiecutter.app_user }}
+USER {{ cookiecutter.app_user }}
 
 WORKDIR /code
 
