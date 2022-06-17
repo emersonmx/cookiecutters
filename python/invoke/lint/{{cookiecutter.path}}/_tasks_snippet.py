@@ -2,7 +2,7 @@ from invoke import Context, task
 
 
 @task
-{%- if cookiecutter.use_pre_commit == "true" %}
+{%- if cookiecutter.use_pre_commit == "y" %}
 def lint(c, all_files=False):
     # type: (Context, bool) -> None
     precommit_options = []
@@ -24,11 +24,11 @@ def lint(c, all_files=False):
     for hook in hooks:
         cmd = " ".join(["pre-commit", "run", *precommit_options, hook])
         c.run(cmd, pty=True)
-    {%- else %}
+{%- else %}
 def lint(c):
     # type: (Context) -> None
     c.run("flake8 .")
     c.run("mypy --strict .")
     c.run("vulture .")
     c.run("bandit -r .")
-    {%- endif %}
+{%- endif %}

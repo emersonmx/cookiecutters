@@ -1,4 +1,4 @@
 {
     "path": "path",
-    "use_pre_commit": false
+    "use_pre_commit": "n"
 }
