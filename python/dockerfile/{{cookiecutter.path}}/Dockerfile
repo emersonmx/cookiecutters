@@ -1,9 +1,11 @@
-FROM python:{{ cookiecutter.docker_image_tag }} as venv
+FROM python:{{ cookiecutter.docker_image_tag }} as build
 
-RUN python -m venv /opt/venv
-ENV PATH=/opt/venv/bin:$PATH
+WORKDIR /code
 
-COPY requirements.txt /requirements.txt
+RUN python -m venv /code/venv
+ENV PATH=/code/venv/bin:$PATH
+
+COPY requirements.txt .
 RUN pip install --require-hashes -r requirements.txt
 
 
@@ -12,14 +14,14 @@ FROM python:{{ cookiecutter.docker_image_tag }}
 RUN useradd --create-home appuser
 USER appuser
 
-WORKDIR /app
+WORKDIR /code
 
-ENV PATH=/opt/venv/bin:$PATH \
+COPY --from=build /code/venv /code/venv
+COPY . /code
+
+ENV PATH=/code/venv/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONOPTIMIZE=1 \
     PYTHONUNBUFFERED=1
-
-COPY --from=venv /opt/venv /opt/venv
-COPY . .
 
 CMD ["python", "main.py"]
