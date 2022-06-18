@@ -67,7 +67,7 @@ def _setup_git() -> None:
         f.write(f"# {project_name}")
 
     run(["git", "add", "README.md"])
-    run(["git", "commit", "-m", "'Start project'"])
+    run(["git", "commit", "-m", "Start project"])
 
 
 def _setup_gitignore() -> None:
@@ -78,7 +78,7 @@ def _setup_gitignore() -> None:
         f.write(response.text)
 
     run(["git", "add", ".gitignore"])
-    run(["git", "commit", "-m", "'Add gitignore'"])
+    run(["git", "commit", "-m", "Add gitignore"])
 
 
 def _setup_poetry() -> None:
@@ -136,11 +136,12 @@ def _setup_template(template: str, extra_context: dict | None = None) -> None:
 
 
 def _setup_templates() -> None:
+    config = _get_config()
     use_pre_commit = _is_pre_commit_enabled()
 
     use_pre_commit_input = "y" if use_pre_commit else "n"
     templates: dict[str, dict] = {
-        "python/pre-commit": {},
+        **({"python/pre-commit": {}} if config.install_pre_commit else {}),
         "python/editorconfig": {},
         "python/direnv": {},
         "python/isort": {},
