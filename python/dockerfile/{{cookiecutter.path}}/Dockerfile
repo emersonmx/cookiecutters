@@ -15,13 +15,13 @@ RUN pip install -r requirements.txt
 
 FROM python:{{ cookiecutter.docker_image_tag }}
 
-RUN useradd --create-home {{ cookiecutter.app_user }}
-USER {{ cookiecutter.app_user }}
+RUN useradd --create-home python
+USER python
 
 WORKDIR /code
 
-COPY --from=build /code/venv /code/venv
-COPY . /code
+COPY --chown=python:python --from=build /code/venv /code/venv
+COPY --chown=python:python . /code
 
 ENV PATH=/code/venv/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
