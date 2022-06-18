@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
+import logging
 import sys
 from subprocess import CalledProcessError, run
+
+logging.basicConfig()
+logger = logging.getLogger("devdeps")
 
 PACKAGES = [
     # tools
@@ -28,26 +32,37 @@ PACKAGES = [
 ]
 
 
-def _install_dependencies() -> None:
-    {%- if cookiecutter.package_manager == "poetry" %}
-    run(["poetry", "add", "-D", *PACKAGES])
-    {%- else %}
-    run(["pip", "install", "--upgrade", "pip"])
-    run(["pip", "install", "--upgrade", *PACKAGES])
-    {%- endif %}
-
-
-def _remove_script() -> None:
-    run(["rm", "-f", sys.argv[0]])
-
-
 def main() -> int:
     try:
         _install_dependencies()
-        _remove_script()
     except CalledProcessError:
         return 1
     return 0
+
+
+def _install_dependencies() -> None:
+    package_manager = _get_package_manager()
+    if package_manager == "poetry":
+        run(["poetry", "add", "-D", *PACKAGES])
+    else:
+        run(["pip", "install", "--upgrade", "pip"])
+        run(["pip", "install", "--upgrade", *PACKAGES])
+
+
+def _get_package_manager() -> str:
+    valid_choices = ["poetry", "pip"]
+    default_choice = valid_choices[0]
+
+    try:
+        _, package_manager = sys.argv
+    except ValueError:
+        package_manager = default_choice
+
+    if package_manager in valid_choices:
+        return package_manager
+
+    logger.warning(f"Invalid package manager: '{package_manager}'. Using poetry!")
+    return default_choice
 
 
 if __name__ == "__main__":
