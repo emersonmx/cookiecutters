@@ -6,7 +6,7 @@ on:
   #  - cron: '0 0 * * *'
 
 jobs:
-  autoupdate:
+  checkupdate:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -20,9 +20,9 @@ jobs:
           python-version: "3.10"
           
       - name: Install dependencies
-        run: pip --upgrade install pre-commit cookiecutter
+        run: pip install --upgrade pre-commit cookiecutter
         
-      - name: Update pre-commit config
+      - name: Check if config has updates
         run: |
           tmp_dir=$(mktemp --directory)
           git init $tmp_dir
