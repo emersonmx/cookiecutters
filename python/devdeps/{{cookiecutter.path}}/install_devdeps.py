@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
 import logging
+import subprocess
 import sys
-from subprocess import CalledProcessError, run
+from functools import partial
 
 logging.basicConfig()
 logger = logging.getLogger("devdeps")
+
+run = partial(subprocess.run, check=True)
 
 PACKAGES = [
     # tools
@@ -35,7 +38,7 @@ PACKAGES = [
 def main() -> int:
     try:
         _install_dependencies()
-    except CalledProcessError:
+    except subprocess.CalledProcessError:
         return 1
     return 0
 

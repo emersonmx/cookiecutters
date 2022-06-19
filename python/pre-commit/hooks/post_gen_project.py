@@ -1,10 +1,13 @@
-from subprocess import DEVNULL, CalledProcessError, run
+import subprocess
+from functools import partial
+
+run = partial(subprocess.run, check=True)
 
 
 def main() -> int:
     try:
-        run(["pre-commit", "autoupdate"], stderr=DEVNULL)
-    except CalledProcessError:
+        run(["pre-commit", "autoupdate"])
+    except subprocess.CalledProcessError:
         return 1
     return 0
 
