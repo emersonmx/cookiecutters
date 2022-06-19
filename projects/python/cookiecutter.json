@@ -1,10 +1,9 @@
 {
     "project_name": "myproject",
-    "setup_git": "y",
-    "setup_gitignore": "y",
+    "git": "y",
     "package_manager": [
         "poetry",
         "pip"
     ],
-    "install_devdeps": "y"
+    "devdeps": "y"
 }

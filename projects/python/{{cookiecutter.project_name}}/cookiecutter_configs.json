@@ -1,6 +1,6 @@
 {
     "project_name": "{{ cookiecutter.project_name }}",
-    "git": "{{ cookiecutter.setup_git }}",
+    "git": "{{ cookiecutter.git }}",
     "package_manager": "{{ cookiecutter.package_manager }}",
-    "devdeps": "{{ cookiecutter.install_devdeps }}"
+    "devdeps": "{{ cookiecutter.devdeps }}"
 }
