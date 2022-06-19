@@ -1,0 +1,46 @@
+name: Update pre-commit config
+
+on:
+  workflow_dispatch:
+  #schedule:
+  #  - cron: '0 0 * * *'
+
+jobs:
+  autoupdate:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+          
+      - name: Install dependencies
+        run: pip --upgrade install pre-commit cookiecutter
+        
+      - name: Update pre-commit config
+        run: |
+          tmp_dir=$(mktemp --directory)
+          git init $tmp_dir
+          cookiecutter -f --no-input --directory python/pre-commit . path=$tmp_dir
+          
+          pre_commit_config='python/pre-commit/{{cookiecutter.path}}/.pre-commit-config.yaml'
+          tmp_pre_commit_config="$tmp_dir/.pre-commit-config.yaml"
+          
+          diff $tmp_pre_commit_config $pre_commit_config
+          if [[ $? != 0 ]]
+          then
+            cp -vf $tmp_pre_commit_config $pre_commit_config
+          fi
+          
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          title: '[python] Update pre-commit template'
+          add-paths: 'python/pre-commit/{{cookiecutter.path}}/.pre-commit-config.yaml'
+          commit-message: '[python] Update pre-commit template'
+          delete-branch: true
