@@ -1,9 +1,9 @@
-from subprocess import CalledProcessError, run
+from subprocess import DEVNULL, CalledProcessError, run
 
 
 def main() -> int:
     try:
-        run(["pre-commit", "autoupdate"])
+        run(["pre-commit", "autoupdate"], stderr=DEVNULL)
     except CalledProcessError:
         return 1
     return 0
