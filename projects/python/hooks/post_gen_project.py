@@ -1,11 +1,15 @@
 import json
+import subprocess
 from dataclasses import dataclass
-from functools import cache
+from functools import cache, partial
+from os import environ as env
 from pathlib import Path
-from subprocess import run
+from typing import Any
 
 import requests
 from cookiecutter.main import cookiecutter  # type: ignore
+
+run = partial(subprocess.run, check=True)
 
 
 @dataclass
@@ -13,10 +17,9 @@ class Config:
     project_name: str
     project_slug: str
     setup_git: bool
-    setup_gitignore: bool
     package_manager: str
     install_devdeps: bool
-    install_pre_commit: bool
+    is_pre_commit_enabled: bool
 
 
 def main() -> int:
@@ -25,20 +28,16 @@ def main() -> int:
 
     if config.setup_git:
         _setup_git()
-        if config.setup_gitignore:
-            _setup_gitignore()
+        _setup_gitignore()
 
-    if config.package_manager == "poetry":
-        _setup_poetry()
-    else:
-        _setup_pip()
+    _setup_package_manager()
 
     if config.install_devdeps:
         _install_devdeps()
 
-    _setup_templates()
+    _setup_default_templates()
 
-    if _is_pre_commit_enabled():
+    if config.is_pre_commit_enabled:
         _install_pre_commit()
 
     _cleanup()
@@ -50,11 +49,31 @@ def main() -> int:
 def _get_config() -> Config:
     with open("cookiecutter_configs.json") as f:
         config_data = json.load(f)
-    return Config(**config_data)
+
+    project_name = config_data["project_name"]
+    project_slug = _make_project_slug(project_name)
+    setup_git = config_data["setup_git"] == "y"
+    install_devdeps = config_data["install_devdeps"] == "y"
+    is_pre_commit_enabled = all([setup_git, install_devdeps])
+
+    return Config(
+        project_name=project_name,
+        project_slug=project_slug,
+        setup_git=setup_git,
+        package_manager=config_data["package_manager"],
+        install_devdeps=install_devdeps,
+        is_pre_commit_enabled=is_pre_commit_enabled,
+    )
+
+
+def _make_project_slug(project_name: str) -> str:
+    translations = str.maketrans({" ": "_", "-": "_"})
+    return project_name.lower().translate(translations)
 
 
 def _show_python_info() -> None:
-    run(["python", "--version"])
+    output = run(["python", "--version"], capture_output=True)
+    print(f"Using {output.stdout.decode().strip()}")  # type: ignore # noqa
 
 
 def _setup_git() -> None:
@@ -64,7 +83,7 @@ def _setup_git() -> None:
     run(["git", "init"])
 
     with open("README.md", "w") as f:
-        f.write(f"# {project_name}")
+        f.write(f"# {project_name}\n")
 
     run(["git", "add", "README.md"])
     run(["git", "commit", "-m", "Start project"])
@@ -81,48 +100,58 @@ def _setup_gitignore() -> None:
     run(["git", "commit", "-m", "Add gitignore"])
 
 
+def _setup_package_manager() -> None:
+    config = _get_config()
+    if config.package_manager == "poetry":
+        _setup_poetry()
+    else:
+        _setup_pip()
+
+
 def _setup_poetry() -> None:
     run(["poetry", "init", "-n"])
     run(["poetry", "install"])
 
+    output = run(["poetry", "env", "info", "--path"], capture_output=True)
+    venv_dir = output.stdout.decode().strip()  # type: ignore
+    venv_bin_dir = (Path(venv_dir) / "bin").absolute()
+    env["PATH"] = f'{venv_bin_dir}:{env["PATH"]}'
+
 
 def _setup_pip() -> None:
-    run(["python", "-m", "venv", _get_venv_dir()])
-    venv_python_bin = _get_venv_python_bin()
-    run([venv_python_bin, "-m", "pip", "install", "--upgrade", "pip"])
+    venv_dir = ".venv"
+    run(["python", "-m", "venv", venv_dir])
 
-
-def _get_venv_dir() -> str:
-    return ".venv"
-
-
-def _get_venv_python_bin() -> str:
-    venv_bin_dir = _get_venv_bin_dir()
-    return str(Path(f"{venv_bin_dir}/python").absolute())
-
-
-def _get_venv_bin_dir() -> str:
-    venv_dir = _get_venv_dir()
-    return str(Path(f"{venv_dir}/bin").absolute())
+    venv_bin_dir = (Path(venv_dir) / "bin").absolute()
+    env["PATH"] = f'{venv_bin_dir}:{env["PATH"]}'
+    run(["pip", "install", "--upgrade", "pip"])
 
 
 def _install_devdeps() -> None:
     config = _get_config()
-    package_manager = config.package_manager
-
     _setup_template("python/devdeps")
-
-    if config.package_manager == "poetry":
-        run(["poetry", "run", "./install_devdeps.py", package_manager])
+    if config.is_pre_commit_enabled:
+        pre_commit_option = "--pre-commit"
     else:
-        python_bin = _get_venv_python_bin()
-        run([python_bin, "./install_devdeps.py", package_manager])
+        pre_commit_option = "--no-pre-commit"
+
+    run(
+        [
+            "python",
+            "./install_devdeps.py",
+            "--package-manager",
+            config.package_manager,
+            pre_commit_option,
+        ]
+    )
 
 
 def _setup_template(template: str, extra_context: dict | None = None) -> None:
     extra_context = extra_context or {}
     cookiecutters_url = "https://github.com/emersonmx/cookiecutters"
     current_dir = Path().absolute()
+
+    print(f"Creating {template}...")  # noqa: T201
     cookiecutter(
         template=cookiecutters_url,
         no_input=True,
@@ -135,13 +164,13 @@ def _setup_template(template: str, extra_context: dict | None = None) -> None:
     )
 
 
-def _setup_templates() -> None:
+def _setup_default_templates() -> None:
     config = _get_config()
-    use_pre_commit = _is_pre_commit_enabled()
+    use_pre_commit = config.is_pre_commit_enabled
 
     use_pre_commit_input = "y" if use_pre_commit else "n"
-    templates: dict[str, dict] = {
-        **({"python/pre-commit": {}} if config.install_pre_commit else {}),
+    templates: dict[str, dict[str, Any]] = {
+        **({"python/pre-commit": {}} if use_pre_commit else {}),
         "python/editorconfig": {},
         "python/direnv": {},
         "python/isort": {},
@@ -160,24 +189,8 @@ def _setup_templates() -> None:
         _setup_template(template, context)
 
 
-def _is_pre_commit_enabled() -> bool:
-    config = _get_config()
-    return all(
-        [
-            config.setup_git,
-            config.install_pre_commit,
-        ]
-    )
-
-
 def _install_pre_commit() -> None:
-    config = _get_config()
-    if config.package_manager == "poetry":
-        run(["poetry", "run", "pre-commit", "install"])
-    else:
-        venv_bin_dir = Path(_get_venv_bin_dir())
-        precommit_bin = str((venv_bin_dir / "pre-commit").absolute())
-        run([precommit_bin, "install"])
+    run(["pre-commit", "install"])
 
 
 def _cleanup() -> None:

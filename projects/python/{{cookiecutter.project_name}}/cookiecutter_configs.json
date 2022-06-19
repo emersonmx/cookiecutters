@@ -1,9 +1,7 @@
 {
     "project_name": "{{ cookiecutter.project_name }}",
-    "project_slug": "{{ cookiecutter.project_slug }}",
     "setup_git": "{{ cookiecutter.setup_git }}",
     "setup_gitignore": "{{ cookiecutter.setup_gitignore }}",
     "package_manager": "{{ cookiecutter.package_manager }}",
-    "install_devdeps": "{{ cookiecutter.install_devdeps }}",
-    "install_pre_commit": "{{ cookiecutter.install_pre_commit }}"
+    "install_devdeps": "{{ cookiecutter.install_devdeps }}"
 }
