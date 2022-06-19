@@ -3,10 +3,9 @@
 ```sh
 # Create a .envrc for poetry in current directory
 cookiecutter \
-    --no-input \
     -f \
-    -o $(dirname $PWD) \
-    https://github.com/emersonmx/cookiecutters --directory=python/direnv \
+    --no-input \
+    --directory=projects/python \
+    https://github.com/emersonmx/cookiecutters.git \
     path=$PWD
 ```
-
