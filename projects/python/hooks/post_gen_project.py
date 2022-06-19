@@ -16,28 +16,28 @@ run = partial(subprocess.run, check=True)
 class Config:
     project_name: str
     project_slug: str
-    setup_git: bool
+    git: bool
     package_manager: str
-    install_devdeps: bool
-    is_pre_commit_enabled: bool
+    devdeps: bool
+    pre_commit: bool
 
 
 def main() -> int:
     config = _get_config()
     _show_python_info()
 
-    if config.setup_git:
+    if config.git:
         _setup_git()
         _setup_gitignore()
 
     _setup_package_manager()
 
-    if config.install_devdeps:
+    if config.devdeps:
         _install_devdeps()
 
     _setup_default_templates()
 
-    if config.is_pre_commit_enabled:
+    if config.pre_commit:
         _install_pre_commit()
 
     _cleanup()
@@ -52,17 +52,17 @@ def _get_config() -> Config:
 
     project_name = config_data["project_name"]
     project_slug = _make_project_slug(project_name)
-    setup_git = config_data["setup_git"] == "y"
-    install_devdeps = config_data["install_devdeps"] == "y"
-    is_pre_commit_enabled = all([setup_git, install_devdeps])
+    git = config_data["git"] == "y"
+    devdeps = config_data["devdeps"] == "y"
+    pre_commit = all([git, devdeps])
 
     return Config(
         project_name=project_name,
         project_slug=project_slug,
-        setup_git=setup_git,
+        git=git,
         package_manager=config_data["package_manager"],
-        install_devdeps=install_devdeps,
-        is_pre_commit_enabled=is_pre_commit_enabled,
+        devdeps=devdeps,
+        pre_commit=pre_commit,
     )
 
 
@@ -130,7 +130,7 @@ def _setup_pip() -> None:
 def _install_devdeps() -> None:
     config = _get_config()
     _setup_template("python/devdeps")
-    if config.is_pre_commit_enabled:
+    if config.pre_commit:
         pre_commit_option = "--pre-commit"
     else:
         pre_commit_option = "--no-pre-commit"
@@ -174,9 +174,8 @@ def _setup_default_templates() -> None:
 
 def _get_default_templates() -> dict[str, Any]:
     config = _get_config()
-    use_pre_commit = config.is_pre_commit_enabled
-    install_devdeps = config.install_devdeps
-    use_pre_commit_input = "y" if use_pre_commit else "n"
+    pre_commit = config.pre_commit
+    pre_commit_input = "y" if pre_commit else "n"
 
     templates = {
         "python/pre-commit": {},
@@ -188,17 +187,17 @@ def _get_default_templates() -> dict[str, Any]:
         "python/mypy": {},
         "python/vulture": {},
         "python/invoke/run": {},
-        "python/invoke/format": {"use_pre_commit": use_pre_commit_input},
-        "python/invoke/lint": {"use_pre_commit": use_pre_commit_input},
+        "python/invoke/format": {"use_pre_commit": pre_commit_input},
+        "python/invoke/lint": {"use_pre_commit": pre_commit_input},
         "python/invoke/tests": {},
         "python/hello_world": {},
         "python/tests": {},
     }
 
     templates_to_remove = []
-    if not use_pre_commit:
+    if not pre_commit:
         templates_to_remove.append("python/pre-commit")
-    if not install_devdeps:
+    if not config.devdeps:
         templates_to_remove.extend(
             [
                 "python/isort",
