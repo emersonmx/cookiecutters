@@ -146,7 +146,10 @@ def _install_devdeps() -> None:
     )
 
 
-def _setup_template(template: str, extra_context: dict | None = None) -> None:
+def _setup_template(
+    template: str,
+    extra_context: dict[str, Any] | None = None,
+) -> None:
     extra_context = extra_context or {}
     cookiecutters_url = "https://github.com/emersonmx/cookiecutters"
     current_dir = Path().absolute()
