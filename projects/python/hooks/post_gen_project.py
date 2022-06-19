@@ -35,7 +35,7 @@ def main() -> int:
     if config.devdeps:
         _install_devdeps()
 
-    _setup_default_templates()
+    _setup_templates()
 
     if config.pre_commit:
         _install_pre_commit()
@@ -128,8 +128,9 @@ def _setup_pip() -> None:
 
 
 def _install_devdeps() -> None:
-    config = _get_config()
     _setup_template("python/devdeps")
+
+    config = _get_config()
     if config.pre_commit:
         pre_commit_option = "--pre-commit"
     else:
@@ -167,12 +168,12 @@ def _setup_template(
     )
 
 
-def _setup_default_templates() -> None:
-    for template, context in _get_default_templates().items():
+def _setup_templates() -> None:
+    for template, context in _get_templates().items():
         _setup_template(template, context)
 
 
-def _get_default_templates() -> dict[str, Any]:
+def _get_templates() -> dict[str, Any]:
     config = _get_config()
     pre_commit = config.pre_commit
     pre_commit_input = "y" if pre_commit else "n"
