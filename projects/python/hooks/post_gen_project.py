@@ -165,12 +165,18 @@ def _setup_template(template: str, extra_context: dict | None = None) -> None:
 
 
 def _setup_default_templates() -> None:
+    for template, context in _get_default_templates().items():
+        _setup_template(template, context)
+
+
+def _get_default_templates() -> dict[str, Any]:
     config = _get_config()
     use_pre_commit = config.is_pre_commit_enabled
-
+    install_devdeps = config.install_devdeps
     use_pre_commit_input = "y" if use_pre_commit else "n"
-    templates: dict[str, dict[str, Any]] = {
-        **({"python/pre-commit": {}} if use_pre_commit else {}),
+
+    templates = {
+        "python/pre-commit": {},
         "python/editorconfig": {},
         "python/direnv": {},
         "python/isort": {},
@@ -185,8 +191,30 @@ def _setup_default_templates() -> None:
         "python/hello_world": {},
         "python/tests": {},
     }
-    for template, context in templates.items():
-        _setup_template(template, context)
+
+    templates_to_remove = []
+    if not use_pre_commit:
+        templates_to_remove.append("python/pre-commit")
+    if not install_devdeps:
+        templates_to_remove.extend(
+            [
+                "python/isort",
+                "python/black",
+                "python/flake8",
+                "python/mypy",
+                "python/vulture",
+                "python/invoke/run",
+                "python/invoke/format",
+                "python/invoke/lint",
+                "python/invoke/tests",
+                "python/tests",
+            ]
+        )
+
+    for template in templates_to_remove:
+        templates.pop(template, None)
+
+    return templates
 
 
 def _install_pre_commit() -> None:
