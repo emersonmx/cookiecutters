@@ -29,6 +29,12 @@ jobs:
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-python-${{ matrix.python-version }}-pip
+      
+      - name: Setup pre-commit cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit
+          key: ${{ runner.os }}-python-${{ matrix.python-version }}-precommit-${{ hashFiles('python/pre-commit/{{cookiecutter.path}}/.pre-commit-config.yaml') }}
           
       - name: Install dependencies
         run: pip install --upgrade pre-commit cookiecutter
