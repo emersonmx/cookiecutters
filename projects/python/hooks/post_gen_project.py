@@ -226,17 +226,15 @@ def _create_direnv_template() -> None:
 
     _setup_template("python/direnv", {"venv_path": venv_path})
 
-    run(
-        ["ex", "-", ".envrc"],
-        input=b"g/^#/d\n$\nd\nw\n",
-    )
-    run(
-        ["ex", "-", ".gitignore"],
-        input=b"/^# Environments\n/^$\ni\n.envrc\n.\nw\n",
-    )
+    _ex(".envrc", b"g/^#/d\n$\nd\nw\n")
+    _ex(".gitignore", b"/^# Environments\n/^$\ni\n.envrc\n.\nw\n")
 
     _git_add([".gitignore"])
     _git_commit("Ignore .envrc")
+
+
+def _ex(filepath: str, script: bytes) -> None:
+    run(["ex", "-", filepath], input=script)
 
 
 def _create_isort_template() -> None:
