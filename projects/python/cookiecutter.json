@@ -1,9 +1,7 @@
 {
     "project_name": "myproject",
-    "git": "y",
     "package_manager": [
         "poetry",
         "pip"
-    ],
-    "devdeps": "y"
+    ]
 }

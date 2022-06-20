@@ -16,30 +16,23 @@ run = partial(subprocess.run, check=True)
 class Config:
     project_name: str
     project_slug: str
-    git: bool  # TODO: Remove
     package_manager: str
-    devdeps: bool  # TODO: Remove
-    pre_commit: bool  # TODO: Remove
 
 
 def main() -> int:
-    config = _get_config()
     _show_python_info()
 
-    if config.git:
-        _setup_git()
-        _create_readme()
-        _create_gitignore()
+    _setup_git()
+    _create_readme()
+    _create_gitignore()
 
     _setup_package_manager()
 
-    if config.devdeps:
-        _install_devdeps()
+    _install_devdeps()
 
     _setup_templates()
 
-    if config.pre_commit:
-        _install_pre_commit()
+    _install_pre_commit()
 
     _cleanup()
 
@@ -53,17 +46,11 @@ def _get_config() -> Config:
 
     project_name = config_data["project_name"]
     project_slug = _make_project_slug(project_name)
-    git = config_data["git"] == "y"
-    devdeps = config_data["devdeps"] == "y"
-    pre_commit = all([git, devdeps])
 
     return Config(
         project_name=project_name,
         project_slug=project_slug,
-        git=git,
         package_manager=config_data["package_manager"],
-        devdeps=devdeps,
-        pre_commit=pre_commit,
     )
 
 
@@ -154,10 +141,6 @@ def _install_devdeps() -> None:
     _setup_template("python/devdeps")
 
     config = _get_config()
-    if config.pre_commit:
-        pre_commit_option = "--pre-commit"
-    else:
-        pre_commit_option = "--no-pre-commit"
 
     run(
         [
@@ -165,7 +148,7 @@ def _install_devdeps() -> None:
             "./install_devdeps.py",
             "--package-manager",
             config.package_manager,
-            pre_commit_option,
+            "--pre-commit",
         ]
     )
 
@@ -196,25 +179,18 @@ def _setup_template(
 
 
 def _setup_templates() -> None:
-    config = _get_config()
-
-    if config.pre_commit:
-        _create_pre_commit_template()
-
+    _create_pre_commit_template()
     _create_editorconfig_template()
     _create_direnv_template()
-
-    if config.devdeps:
-        _create_isort_template()
-        _create_black_template()
-        _create_flake8_template()
-        _create_mypy_template()
-        _create_vulture_template()
-        _create_invoke_run_template()
-        _create_invoke_format_template()
-        _create_invoke_lint_template()
-        _create_invoke_tests_template()
-
+    _create_isort_template()
+    _create_black_template()
+    _create_flake8_template()
+    _create_mypy_template()
+    _create_vulture_template()
+    _create_invoke_run_template()
+    _create_invoke_format_template()
+    _create_invoke_lint_template()
+    _create_invoke_tests_template()
     _create_hello_world_template()
     _create_tests_template()
 
@@ -236,7 +212,7 @@ def _create_direnv_template() -> None:
 
     run(
         ["ex", "-", ".envrc"],
-        input=b"$\nd\n%\nw\n",
+        input=b"g/^#/d\n$\nd\nw\n",
     )
     run(
         ["ex", "-", ".gitignore"],
@@ -284,19 +260,13 @@ def _create_invoke_run_template() -> None:
 
 
 def _create_invoke_format_template() -> None:
-    config = _get_config()
-    pre_commit = "y" if config.pre_commit else "n"
-    _setup_template("python/invoke/format", {"use_pre_commit": pre_commit})
-
+    _setup_template("python/invoke/format", {"use_pre_commit": "y"})
     _git_add(["tasks.py"])
     _git_commit("Add format task")
 
 
 def _create_invoke_lint_template() -> None:
-    config = _get_config()
-    pre_commit = "y" if config.pre_commit else "n"
-    _setup_template("python/invoke/lint", {"use_pre_commit": pre_commit})
-
+    _setup_template("python/invoke/lint", {"use_pre_commit": "y"})
     _git_add(["tasks.py"])
     _git_commit("Add lint task")
 
