@@ -121,11 +121,16 @@ def _setup_poetry() -> None:
 @cache
 def _get_poetry_venv_dir() -> str:
     output = run(["poetry", "env", "info", "--path"], capture_output=True)
-    return output.stdout.decode().strip()  # type: ignore
+    venv_dir: str = output.stdout.decode().strip()  # type: ignore
+    default_dir = _get_default_venv_dir()
+    current_dir = Path().absolute()
+    if str(current_dir / default_dir) == venv_dir:
+        return default_dir
+    return venv_dir
 
 
 def _setup_pip() -> None:
-    venv_dir = _get_venv_dir()
+    venv_dir = _get_default_venv_dir()
     run(["python", "-m", "venv", venv_dir])
 
     venv_bin_dir = (Path(venv_dir) / "bin").absolute()
@@ -133,7 +138,7 @@ def _setup_pip() -> None:
     run(["pip", "install", "--upgrade", "pip"])
 
 
-def _get_venv_dir() -> str:
+def _get_default_venv_dir() -> str:
     return ".venv"
 
 
@@ -208,7 +213,12 @@ def _create_editorconfig_template() -> None:
 
 
 def _create_direnv_template() -> None:
-    _setup_template("python/direnv", {})  # TODO: Add venv_path
+    config = _get_config()
+    venv_path = _get_default_venv_dir()
+    if config.package_manager == "poetry":
+        venv_path = _get_poetry_venv_dir()
+
+    _setup_template("python/direnv", {"venv_path": venv_path})
 
     run(
         ["ex", "-", ".envrc"],
