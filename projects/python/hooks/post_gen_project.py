@@ -264,7 +264,12 @@ def _create_vulture_template() -> None:
 
 
 def _create_invoke_run_template() -> None:
-    _setup_template("python/invoke/run")
+    config = _get_config()
+    project_slug = config.project_slug
+    _setup_template(
+        "python/invoke/run",
+        {"command": f"python {project_slug}.py"},
+    )
     _git_add(["tasks.py"])
     _git_commit("Add run task")
 
