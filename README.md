@@ -27,3 +27,4 @@ cookiecutter \
 - Use only the standard, requests and cookiecutter libraries to write the
   hooks.
 - Many language templates use a `post_gen_project.py` hook to apply a snippet.
+- A project MUST USE tools to help development (git, devdeps, pre-commit, etc).
