@@ -196,7 +196,7 @@ def _setup_templates() -> None:
     _create_invoke_format_template()
     _create_invoke_lint_template()
     _create_invoke_tests_template()
-    _create_hello_world_template()
+    _create_empty_module_template()
     _create_tests_template()
 
 
@@ -287,10 +287,13 @@ def _create_invoke_tests_template() -> None:
     _git_commit("Add tests task")
 
 
-def _create_hello_world_template() -> None:
-    _setup_template("python/hello_world")
-    _git_add(["main.py"])
-    _git_commit("Add main.py")
+def _create_empty_module_template() -> None:
+    config = _get_config()
+    module_name = f"{config.project_slug}.py"
+    module_path = Path(module_name)
+    module_path.touch(exist_ok=True)
+    _git_add([module_name])
+    _git_commit(f"Add {module_name}")
 
 
 def _create_tests_template() -> None:
