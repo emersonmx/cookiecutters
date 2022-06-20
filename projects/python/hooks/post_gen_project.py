@@ -21,17 +21,30 @@ class Config:
 
 
 def main() -> int:
-    _show_python_info()
+    _show_python_version()
 
-    _setup_git()
-    _create_readme()
-    _create_gitignore()
+    _initialize_git()
+    _add_readme()
+    _add_gitignore()
 
-    _setup_package_manager()
+    _create_virtualenv()
 
     _install_devdeps()
 
-    _setup_templates()
+    _add_editorconfig()
+    _create_envrc()
+    _ignore_envrc()
+    _create_an_empty_module()
+    _add_isort_config()
+    _add_black_config()
+    _add_flake8_config()
+    _add_mypy_config()
+    _add_vulture_config()
+    _add_run_task()
+    _add_format_task()
+    _add_lint_task()
+    _add_tests_task()
+    _create_tests_directory()
 
     _install_pre_commit()
 
@@ -40,16 +53,16 @@ def main() -> int:
     return 0
 
 
-def _show_python_info() -> None:
+def _show_python_version() -> None:
     output = run(["python", "--version"], capture_output=True)
     print(f"Using {output.stdout.decode().strip()}")  # type: ignore # noqa
 
 
-def _setup_git() -> None:
+def _initialize_git() -> None:
     run(["git", "init"])
 
 
-def _create_readme() -> None:
+def _add_readme() -> None:
     config = _get_config()
     project_name = config.project_name
 
@@ -57,7 +70,7 @@ def _create_readme() -> None:
         f.write(f"# {project_name}\n")
 
     _git_add(["README.md"])
-    _git_commit("Add README.md")
+    _git_commit("Add README")
 
 
 @cache
@@ -88,7 +101,7 @@ def _git_commit(message: str) -> None:
     run(["git", "commit", "-m", message])
 
 
-def _create_gitignore() -> None:
+def _add_gitignore() -> None:
     response = requests.get("https://www.gitignore.io/api/python")
     response.raise_for_status()
 
@@ -99,15 +112,15 @@ def _create_gitignore() -> None:
     _git_commit("Add gitignore")
 
 
-def _setup_package_manager() -> None:
+def _create_virtualenv() -> None:
     config = _get_config()
     if config.package_manager == "poetry":
-        _setup_poetry()
+        _create_virtualenv_with_poetry()
     else:
-        _setup_pip()
+        _create_virtualenv_with_venv()
 
 
-def _setup_poetry() -> None:
+def _create_virtualenv_with_poetry() -> None:
     run(["poetry", "init", "-n"])
     run(["poetry", "install"])
 
@@ -116,7 +129,7 @@ def _setup_poetry() -> None:
     env["PATH"] = f'{venv_bin_dir}:{env["PATH"]}'
 
     _git_add(["poetry.lock", "pyproject.toml"])
-    _git_commit("Setup poetry")
+    _git_commit("Initialize poetry")
 
 
 @cache
@@ -134,7 +147,7 @@ def _get_default_venv_dir() -> str:
     return ".venv"
 
 
-def _setup_pip() -> None:
+def _create_virtualenv_with_venv() -> None:
     venv_dir = _get_default_venv_dir()
     run(["python", "-m", "venv", venv_dir])
 
@@ -143,8 +156,14 @@ def _setup_pip() -> None:
     run(["pip", "install", "--upgrade", "pip"])
 
 
+def _get_cookiecutters_dir() -> str:
+    config = get_cookiecutter_config()
+    cookiecutter_dir = Path(config["cookiecutters_dir"]) / "cookiecutters"
+    return str(cookiecutter_dir.absolute())
+
+
 def _install_devdeps() -> None:
-    _setup_template("python/devdeps")
+    _create_from_template("python/devdeps")
 
     config = _get_config()
 
@@ -163,7 +182,7 @@ def _install_devdeps() -> None:
         _git_commit("Install development dependencies")
 
 
-def _setup_template(
+def _create_from_template(
     template: str,
     extra_context: dict[str, Any] | None = None,
 ) -> None:
@@ -183,49 +202,22 @@ def _setup_template(
     )
 
 
-def _get_cookiecutters_dir() -> str:
-    config = get_cookiecutter_config()
-    cookiecutter_dir = Path(config["cookiecutters_dir"]) / "cookiecutters"
-    return str(cookiecutter_dir.absolute())
-
-
-def _setup_templates() -> None:
-    _create_pre_commit_template()
-    _create_editorconfig_template()
-    _create_direnv_template()
-    _create_isort_template()
-    _create_black_template()
-    _create_flake8_template()
-    _create_mypy_template()
-    _create_vulture_template()
-    _create_invoke_run_template()
-    _create_invoke_format_template()
-    _create_invoke_lint_template()
-    _create_invoke_tests_template()
-    _create_empty_module_template()
-    _create_tests_template()
-
-
-def _create_pre_commit_template() -> None:
-    _setup_template("python/pre-commit")
-    _git_add([".pre-commit-config.yaml"])
-    _git_commit("Add pre-commit config")
-
-
-def _create_editorconfig_template() -> None:
-    _setup_template("python/editorconfig")
+def _add_editorconfig() -> None:
+    _create_from_template("python/editorconfig")
     _git_add([".editorconfig"])
     _git_commit("Add editorconfig")
 
 
-def _create_direnv_template() -> None:
+def _create_envrc() -> None:
     config = _get_config()
     venv_path = _get_default_venv_dir()
     if config.package_manager == "poetry":
         venv_path = _get_poetry_venv_dir()
 
-    _setup_template("python/direnv", {"venv_path": venv_path})
+    _create_from_template("python/direnv", {"venv_path": venv_path})
 
+
+def _ignore_envrc() -> None:
     _ex(".envrc", b"g/^#/d\n$\nd\nw\n")
     _ex(".gitignore", b"/^# Environments\n/^$\ni\n.envrc\n.\nw\n")
 
@@ -237,40 +229,50 @@ def _ex(filepath: str, script: bytes) -> None:
     run(["ex", "-", filepath], input=script)
 
 
-def _create_isort_template() -> None:
-    _setup_template("python/isort")
+def _create_an_empty_module() -> None:
+    config = _get_config()
+    module_name = f"{config.project_slug}.py"
+    module_path = Path(module_name)
+    module_path.touch(exist_ok=True)
+
+    _git_add([module_name])
+    _git_commit(f"Add {module_name}")
+
+
+def _add_isort_config() -> None:
+    _create_from_template("python/isort")
     _git_add(["pyproject.toml"])
-    _git_commit("Add isort configs")
+    _git_commit("Add isort config")
 
 
-def _create_black_template() -> None:
-    _setup_template("python/black")
+def _add_black_config() -> None:
+    _create_from_template("python/black")
     _git_add(["pyproject.toml"])
-    _git_commit("Add black configs")
+    _git_commit("Add black config")
 
 
-def _create_flake8_template() -> None:
-    _setup_template("python/flake8")
+def _add_flake8_config() -> None:
+    _create_from_template("python/flake8")
     _git_add([".flake8"])
-    _git_commit("Add flake8 configs")
+    _git_commit("Add flake8 config")
 
 
-def _create_mypy_template() -> None:
-    _setup_template("python/mypy")
+def _add_mypy_config() -> None:
+    _create_from_template("python/mypy")
     _git_add(["pyproject.toml"])
-    _git_commit("Add mypy configs")
+    _git_commit("Add mypy config")
 
 
-def _create_vulture_template() -> None:
-    _setup_template("python/vulture")
+def _add_vulture_config() -> None:
+    _create_from_template("python/vulture")
     _git_add(["pyproject.toml"])
-    _git_commit("Add vulture configs")
+    _git_commit("Add vulture config")
 
 
-def _create_invoke_run_template() -> None:
+def _add_run_task() -> None:
     config = _get_config()
     project_slug = config.project_slug
-    _setup_template(
+    _create_from_template(
         "python/invoke/run",
         {"command": f"python {project_slug}.py"},
     )
@@ -278,40 +280,38 @@ def _create_invoke_run_template() -> None:
     _git_commit("Add run task")
 
 
-def _create_invoke_format_template() -> None:
-    _setup_template("python/invoke/format", {"use_pre_commit": "y"})
+def _add_format_task() -> None:
+    _create_from_template("python/invoke/format", {"use_pre_commit": "y"})
     _git_add(["tasks.py"])
     _git_commit("Add format task")
 
 
-def _create_invoke_lint_template() -> None:
-    _setup_template("python/invoke/lint", {"use_pre_commit": "y"})
+def _add_lint_task() -> None:
+    _create_from_template("python/invoke/lint", {"use_pre_commit": "y"})
     _git_add(["tasks.py"])
     _git_commit("Add lint task")
 
 
-def _create_invoke_tests_template() -> None:
-    _setup_template("python/invoke/tests")
+def _add_tests_task() -> None:
+    _create_from_template("python/invoke/tests")
     _git_add(["tasks.py"])
     _git_commit("Add tests task")
 
 
-def _create_empty_module_template() -> None:
-    config = _get_config()
-    module_name = f"{config.project_slug}.py"
-    module_path = Path(module_name)
-    module_path.touch(exist_ok=True)
-    _git_add([module_name])
-    _git_commit(f"Add {module_name}")
+def _create_tests_directory() -> None:
+    tests_path = Path("tests").absolute()
+    tests_path.mkdir(parents=True, exist_ok=True)
+    (tests_path / "__init__.py").touch(exist_ok=True)
 
-
-def _create_tests_template() -> None:
-    _setup_template("python/tests")
-    _git_add(["pyproject.toml", "tests/"])
-    _git_commit("Add tests")
+    _git_add(["tests/__init__.py"])
+    _git_commit("Add tests directory")
 
 
 def _install_pre_commit() -> None:
+    _create_from_template("python/pre-commit")
+    _git_add([".pre-commit-config.yaml"])
+    _git_commit("Add pre-commit config")
+
     run(["pre-commit", "install"])
 
 
