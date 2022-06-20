@@ -16,3 +16,8 @@ cookiecutter \
     https://github.com/emersonmx/cookiecutters.git \
     path=$PWD
 ```
+
+## Design Patterns
+
+- All `python` templates has a `path` variable.
+- Many `python` templates use a `post_gen_project.py` hook to apply a snippet.
