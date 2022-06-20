@@ -1,3 +1,4 @@
 {
-    "path": "path"
+    "path": "path",
+    "command": "python main.py"
 }
