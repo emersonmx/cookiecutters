@@ -115,7 +115,7 @@ def _setup_poetry() -> None:
     env["PATH"] = f'{venv_bin_dir}:{env["PATH"]}'
 
     _git_add(["poetry.lock", "pyproject.toml"])
-    _git_commit("Add poetry configs")
+    _git_commit("Setup poetry")
 
 
 @cache
