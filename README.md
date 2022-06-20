@@ -17,7 +17,13 @@ cookiecutter \
     path=$PWD
 ```
 
-## Design Patterns
+## Design Decisions
 
-- All `python` templates has a `path` variable.
-- Many `python` templates use a `post_gen_project.py` hook to apply a snippet.
+- All language templates MUST BE project agnostic.
+- All language templates MUST HAVE a `path` variable.
+- The responsibility for modifying the language templates rests with the
+  project templates.
+- Use python to write the hooks.
+- Use only the standard, requests and cookiecutter libraries to write the
+  hooks.
+- Many language templates use a `post_gen_project.py` hook to apply a snippet.
