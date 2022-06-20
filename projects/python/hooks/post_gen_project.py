@@ -40,26 +40,6 @@ def main() -> int:
     return 0
 
 
-@cache
-def _get_config() -> Config:
-    with open("cookiecutter_configs.json") as f:
-        config_data = json.load(f)
-
-    project_name = config_data["project_name"]
-    project_slug = _make_project_slug(project_name)
-
-    return Config(
-        project_name=project_name,
-        project_slug=project_slug,
-        package_manager=config_data["package_manager"],
-    )
-
-
-def _make_project_slug(project_name: str) -> str:
-    translations = str.maketrans({" ": "_", "-": "_"})
-    return project_name.lower().translate(translations)
-
-
 def _show_python_info() -> None:
     output = run(["python", "--version"], capture_output=True)
     print(f"Using {output.stdout.decode().strip()}")  # type: ignore # noqa
@@ -78,6 +58,26 @@ def _create_readme() -> None:
 
     _git_add(["README.md"])
     _git_commit("Add README.md")
+
+
+@cache
+def _get_config() -> Config:
+    with open("cookiecutter_configs.json") as f:
+        config_data = json.load(f)
+
+    project_name = config_data["project_name"]
+    project_slug = _make_project_slug(project_name)
+
+    return Config(
+        project_name=project_name,
+        project_slug=project_slug,
+        package_manager=config_data["package_manager"],
+    )
+
+
+def _make_project_slug(project_name: str) -> str:
+    translations = str.maketrans({" ": "_", "-": "_"})
+    return project_name.lower().translate(translations)
 
 
 def _git_add(files: list[str]) -> None:
@@ -130,6 +130,10 @@ def _get_poetry_venv_dir() -> str:
     return venv_dir
 
 
+def _get_default_venv_dir() -> str:
+    return ".venv"
+
+
 def _setup_pip() -> None:
     venv_dir = _get_default_venv_dir()
     run(["python", "-m", "venv", venv_dir])
@@ -137,10 +141,6 @@ def _setup_pip() -> None:
     venv_bin_dir = (Path(venv_dir) / "bin").absolute()
     env["PATH"] = f'{venv_bin_dir}:{env["PATH"]}'
     run(["pip", "install", "--upgrade", "pip"])
-
-
-def _get_default_venv_dir() -> str:
-    return ".venv"
 
 
 def _install_devdeps() -> None:
