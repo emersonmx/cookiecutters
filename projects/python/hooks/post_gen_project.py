@@ -16,10 +16,10 @@ run = partial(subprocess.run, check=True)
 class Config:
     project_name: str
     project_slug: str
-    git: bool
+    git: bool  # TODO: Remove
     package_manager: str
-    devdeps: bool
-    pre_commit: bool
+    devdeps: bool  # TODO: Remove
+    pre_commit: bool  # TODO: Remove
 
 
 def main() -> int:
@@ -28,7 +28,8 @@ def main() -> int:
 
     if config.git:
         _setup_git()
-        _setup_gitignore()
+        _create_readme()
+        _create_gitignore()
 
     _setup_package_manager()
 
@@ -77,27 +78,37 @@ def _show_python_info() -> None:
 
 
 def _setup_git() -> None:
+    run(["git", "init"])
+
+
+def _create_readme() -> None:
     config = _get_config()
     project_name = config.project_name
-
-    run(["git", "init"])
 
     with open("README.md", "w") as f:
         f.write(f"# {project_name}\n")
 
-    run(["git", "add", "README.md"])
-    run(["git", "commit", "-m", "Start project"])
+    _git_add(["README.md"])
+    _git_commit("Add README.md")
 
 
-def _setup_gitignore() -> None:
+def _git_add(files: list[str]) -> None:
+    run(["git", "add", *files])
+
+
+def _git_commit(message: str) -> None:
+    run(["git", "commit", "-m", message])
+
+
+def _create_gitignore() -> None:
     response = requests.get("https://www.gitignore.io/api/python")
     response.raise_for_status()
 
     with open(".gitignore", "w") as f:
         f.write(response.text)
 
-    run(["git", "add", ".gitignore"])
-    run(["git", "commit", "-m", "Add gitignore"])
+    _git_add([".gitignore"])
+    _git_commit("Add gitignore")
 
 
 def _setup_package_manager() -> None:
@@ -112,19 +123,31 @@ def _setup_poetry() -> None:
     run(["poetry", "init", "-n"])
     run(["poetry", "install"])
 
-    output = run(["poetry", "env", "info", "--path"], capture_output=True)
-    venv_dir = output.stdout.decode().strip()  # type: ignore
+    venv_dir = _get_poetry_venv_dir()
     venv_bin_dir = (Path(venv_dir) / "bin").absolute()
     env["PATH"] = f'{venv_bin_dir}:{env["PATH"]}'
 
+    _git_add(["poetry.lock", "pyproject.toml"])
+    _git_commit("Add poetry configs")
+
+
+@cache
+def _get_poetry_venv_dir() -> str:
+    output = run(["poetry", "env", "info", "--path"], capture_output=True)
+    return output.stdout.decode().strip()  # type: ignore
+
 
 def _setup_pip() -> None:
-    venv_dir = ".venv"
+    venv_dir = _get_venv_dir()
     run(["python", "-m", "venv", venv_dir])
 
     venv_bin_dir = (Path(venv_dir) / "bin").absolute()
     env["PATH"] = f'{venv_bin_dir}:{env["PATH"]}'
     run(["pip", "install", "--upgrade", "pip"])
+
+
+def _get_venv_dir() -> str:
+    return ".venv"
 
 
 def _install_devdeps() -> None:
@@ -145,6 +168,10 @@ def _install_devdeps() -> None:
             pre_commit_option,
         ]
     )
+
+    if config.package_manager == "poetry":
+        _git_add(["poetry.lock", "pyproject.toml"])
+        _git_commit("Install development dependencies")
 
 
 def _setup_template(
@@ -169,55 +196,127 @@ def _setup_template(
 
 
 def _setup_templates() -> None:
-    for template, context in _get_templates().items():
-        _setup_template(template, context)
-
-
-def _get_templates() -> dict[str, Any]:
     config = _get_config()
-    pre_commit = config.pre_commit
-    pre_commit_input = "y" if pre_commit else "n"
 
-    templates = {
-        "python/pre-commit": {},
-        "python/editorconfig": {},
-        "python/direnv": {},
-        "python/isort": {},
-        "python/black": {},
-        "python/flake8": {},
-        "python/mypy": {},
-        "python/vulture": {},
-        "python/invoke/run": {},
-        "python/invoke/format": {"use_pre_commit": pre_commit_input},
-        "python/invoke/lint": {"use_pre_commit": pre_commit_input},
-        "python/invoke/tests": {},
-        "python/hello_world": {},
-        "python/tests": {},
-    }
+    if config.pre_commit:
+        _create_pre_commit_template()
 
-    templates_to_remove = []
-    if not pre_commit:
-        templates_to_remove.append("python/pre-commit")
-    if not config.devdeps:
-        templates_to_remove.extend(
-            [
-                "python/isort",
-                "python/black",
-                "python/flake8",
-                "python/mypy",
-                "python/vulture",
-                "python/invoke/run",
-                "python/invoke/format",
-                "python/invoke/lint",
-                "python/invoke/tests",
-                "python/tests",
-            ]
-        )
+    _create_editorconfig_template()
+    _create_direnv_template()
 
-    for template in templates_to_remove:
-        templates.pop(template, None)
+    if config.devdeps:
+        _create_isort_template()
+        _create_black_template()
+        _create_flake8_template()
+        _create_mypy_template()
+        _create_vulture_template()
+        _create_invoke_run_template()
+        _create_invoke_format_template()
+        _create_invoke_lint_template()
+        _create_invoke_tests_template()
 
-    return templates
+    _create_hello_world_template()
+    _create_tests_template()
+
+
+def _create_pre_commit_template() -> None:
+    _setup_template("python/pre-commit")
+    _git_add([".pre-commit-config.yaml"])
+    _git_commit("Add pre-commit config")
+
+
+def _create_editorconfig_template() -> None:
+    _setup_template("python/editorconfig")
+    _git_add([".editorconfig"])
+    _git_commit("Add editorconfig")
+
+
+def _create_direnv_template() -> None:
+    _setup_template("python/direnv", {})  # TODO: Add venv_path
+
+    run(
+        ["ex", "-", ".envrc"],
+        input=b"$\nd\n%\nw\n",
+    )
+    run(
+        ["ex", "-", ".gitignore"],
+        input=b"/^# Environments\n/^$\ni\n.envrc\n.\nw\n",
+    )
+
+    _git_add([".gitignore"])
+    _git_commit("Ignore .envrc")
+
+
+def _create_isort_template() -> None:
+    _setup_template("python/isort")
+    _git_add(["pyproject.toml"])
+    _git_commit("Add isort configs")
+
+
+def _create_black_template() -> None:
+    _setup_template("python/black")
+    _git_add(["pyproject.toml"])
+    _git_commit("Add black configs")
+
+
+def _create_flake8_template() -> None:
+    _setup_template("python/flake8")
+    _git_add([".flake8"])
+    _git_commit("Add flake8 configs")
+
+
+def _create_mypy_template() -> None:
+    _setup_template("python/mypy")
+    _git_add(["pyproject.toml"])
+    _git_commit("Add mypy configs")
+
+
+def _create_vulture_template() -> None:
+    _setup_template("python/vulture")
+    _git_add(["pyproject.toml"])
+    _git_commit("Add vulture configs")
+
+
+def _create_invoke_run_template() -> None:
+    _setup_template("python/invoke/run")
+    _git_add(["tasks.py"])
+    _git_commit("Add run task")
+
+
+def _create_invoke_format_template() -> None:
+    config = _get_config()
+    pre_commit = "y" if config.pre_commit else "n"
+    _setup_template("python/invoke/format", {"use_pre_commit": pre_commit})
+
+    _git_add(["tasks.py"])
+    _git_commit("Add format task")
+
+
+def _create_invoke_lint_template() -> None:
+    config = _get_config()
+    pre_commit = "y" if config.pre_commit else "n"
+    _setup_template("python/invoke/lint", {"use_pre_commit": pre_commit})
+
+    _git_add(["tasks.py"])
+    _git_commit("Add lint task")
+
+
+def _create_invoke_tests_template() -> None:
+    _setup_template("python/invoke/tests")
+    _git_add(["tasks.py"])
+    _git_commit("Add tests task")
+
+
+def _create_hello_world_template() -> None:
+    _setup_template("python/hello_world")
+    _git_add(["main.py"])
+    _git_commit("Add main.py")
+
+
+def _create_tests_template() -> None:
+    _setup_template("python/tests")
+    _git_add(["pyproject.toml", "tests/"])
+    _git_commit("Add tests")
 
 
 def _install_pre_commit() -> None:
