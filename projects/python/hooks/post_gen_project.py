@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import requests
+from cookiecutter.config import get_user_config as get_cookiecutter_config
 from cookiecutter.main import cookiecutter  # type: ignore
 
 run = partial(subprocess.run, check=True)
@@ -167,12 +168,11 @@ def _setup_template(
     extra_context: dict[str, Any] | None = None,
 ) -> None:
     extra_context = extra_context or {}
-    cookiecutters_url = "https://github.com/emersonmx/cookiecutters"
     current_dir = Path().absolute()
 
     print(f"Creating {template}...")  # noqa: T201
     cookiecutter(
-        template=cookiecutters_url,
+        template=_get_cookiecutters_dir(),
         no_input=True,
         overwrite_if_exists=True,
         directory=template,
@@ -181,6 +181,12 @@ def _setup_template(
             **extra_context,
         },
     )
+
+
+def _get_cookiecutters_dir() -> str:
+    config = get_cookiecutter_config()
+    cookiecutter_dir = Path(config["cookiecutters_dir"]) / "cookiecutters"
+    return str(cookiecutter_dir.absolute())
 
 
 def _setup_templates() -> None:
