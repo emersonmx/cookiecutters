@@ -8,7 +8,7 @@ from typing import Any
 
 import requests
 from cookiecutter.config import get_user_config as get_cookiecutter_config
-from cookiecutter.main import cookiecutter  # type: ignore
+from cookiecutter.main import cookiecutter
 
 run = partial(subprocess.run, check=True)
 
