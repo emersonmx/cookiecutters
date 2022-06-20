@@ -1,3 +1,4 @@
 {
-    "path": "path"
+    "path": "path",
+    "venv_path": ".venv"
 }
