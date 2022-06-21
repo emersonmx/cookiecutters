@@ -1,3 +1,4 @@
 {
-    "path": "path"
+    "path": "path",
+    "exclude_paths": "[\".venv/\"]"
 }
