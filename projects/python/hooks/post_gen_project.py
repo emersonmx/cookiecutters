@@ -46,11 +46,11 @@ def main() -> int:
 
 
 def show_python_version() -> None:
-    python_version = _get_python_version()
+    python_version = get_python_version()
     print(f"Using {python_version}")  # noqa: T201
 
 
-def _get_python_version() -> str:
+def get_python_version() -> str:
     output = run(["python", "--version"], capture_output=True)
     return output.stdout.decode().strip()  # type: ignore # noqa
 
@@ -60,27 +60,27 @@ def initialize_git() -> None:
 
 
 def add_readme() -> None:
-    _create_readme()
+    create_readme()
     git_add(["README.md"])
     git_commit("Add README")
 
 
-def _create_readme() -> None:
+def create_readme() -> None:
     project_name = get_project_name()
     with open("README.md", "w") as f:
         f.write(f"# {project_name}\n")
 
 
 def get_project_name() -> str:
-    config = _get_config()
+    config = get_config()
     return config["project_name"]
 
 
 @cache
-def _get_config() -> dict:
-    config_data = _load_config_json()
+def get_config() -> dict:
+    config_data = load_config_json()
     project_name = config_data["project_name"]
-    project_slug = _make_project_slug(project_name)
+    project_slug = make_project_slug(project_name)
     return {
         "project_name": project_name,
         "project_slug": project_slug,
@@ -88,12 +88,12 @@ def _get_config() -> dict:
     }
 
 
-def _load_config_json() -> dict:
+def load_config_json() -> dict:
     with open("cookiecutter_configs.json") as f:
         return json.load(f)
 
 
-def _make_project_slug(project_name: str) -> str:
+def make_project_slug(project_name: str) -> str:
     translations = str.maketrans({" ": "_", "-": "_"})
     return project_name.lower().translate(translations)
 
@@ -107,18 +107,18 @@ def git_commit(message: str) -> None:
 
 
 def add_gitignore() -> None:
-    _create_gitignore()
+    create_gitignore()
     git_add([".gitignore"])
     git_commit("Add gitignore")
 
 
-def _create_gitignore() -> None:
-    gitignore_data = _get_gitignore_data()
+def create_gitignore() -> None:
+    gitignore_data = get_gitignore_data()
     with open(".gitignore", "w") as f:
         f.write(gitignore_data)
 
 
-def _get_gitignore_data() -> str:
+def get_gitignore_data() -> str:
     response = requests.get("https://www.gitignore.io/api/python")
     response.raise_for_status()
     return response.text
@@ -126,9 +126,9 @@ def _get_gitignore_data() -> str:
 
 def create_virtualenv() -> None:
     if is_using_poetry():
-        _create_virtualenv_with_poetry()
+        create_virtualenv_with_poetry()
     else:
-        _create_virtualenv_with_venv()
+        create_virtualenv_with_venv()
 
 
 def is_using_poetry() -> bool:
@@ -136,22 +136,22 @@ def is_using_poetry() -> bool:
 
 
 def get_package_manager() -> str:
-    config = _get_config()
+    config = get_config()
     return config["package_manager"]
 
 
-def _create_virtualenv_with_poetry() -> None:
+def create_virtualenv_with_poetry() -> None:
     run(["poetry", "init", "-n"])
     run(["poetry", "install"])
 
-    venv_bin_dir = _get_poetry_virtualenv_bin_directory()
+    venv_bin_dir = get_poetry_virtualenv_bin_directory()
     add_directory_to_environment_path(venv_bin_dir)
 
     git_add(["poetry.lock", "pyproject.toml"])
     git_commit("Initialize poetry")
 
 
-def _get_poetry_virtualenv_bin_directory() -> str:
+def get_poetry_virtualenv_bin_directory() -> str:
     venv_dir = get_poetry_virtualenv_directory()
     return str((Path(venv_dir) / "bin").absolute())
 
@@ -160,12 +160,12 @@ def _get_poetry_virtualenv_bin_directory() -> str:
 def get_poetry_virtualenv_directory() -> str:
     output = run(["poetry", "env", "info", "--path"], capture_output=True)
     venv_dir: str = output.stdout.decode().strip()  # type: ignore
-    if _is_pointing_to_local_venv(venv_dir):
+    if is_pointing_to_local_venv(venv_dir):
         return get_virtualenv_directory()
     return venv_dir
 
 
-def _is_pointing_to_local_venv(virtualenv_dir: str) -> bool:
+def is_pointing_to_local_venv(virtualenv_dir: str) -> bool:
     default_venv_dir = get_virtualenv_directory()
     current_dir = Path().absolute()
     return str(current_dir / default_venv_dir) == virtualenv_dir
@@ -179,13 +179,13 @@ def add_directory_to_environment_path(directory: str) -> None:
     env["PATH"] = f'{directory}:{env["PATH"]}'
 
 
-def _create_virtualenv_with_venv() -> None:
+def create_virtualenv_with_venv() -> None:
     run(["python", "-m", "venv", get_virtualenv_directory()])
-    add_directory_to_environment_path(_get_venv_bin_directory())
+    add_directory_to_environment_path(get_venv_bin_directory())
     run(["pip", "install", "--upgrade", "pip"])
 
 
-def _get_venv_bin_directory() -> str:
+def get_venv_bin_directory() -> str:
     venv_dir = get_virtualenv_directory()
     return str((Path(venv_dir) / "bin").absolute())
 
@@ -217,7 +217,7 @@ def create_from_template(
 
     print(f"Creating {template}...")  # noqa: T201
     cookiecutter(
-        template=_get_cookiecutters_dir(),
+        template=get_cookiecutters_dir(),
         no_input=True,
         overwrite_if_exists=True,
         directory=template,
@@ -228,7 +228,7 @@ def create_from_template(
     )
 
 
-def _get_cookiecutters_dir() -> str:
+def get_cookiecutters_dir() -> str:
     config = get_cookiecutter_config()
     cookiecutter_dir = Path(config["cookiecutters_dir"]) / "cookiecutters"
     return str(cookiecutter_dir.absolute())
@@ -269,7 +269,7 @@ def create_an_empty_module() -> None:
 
 
 def get_project_slug() -> str:
-    config = _get_config()
+    config = get_config()
     return config["project_slug"]
 
 
@@ -299,7 +299,7 @@ def add_mypy_config() -> None:
 
 def add_vulture_config() -> None:
     exclude_paths = []
-    if _is_virtualenv_directory_exists():
+    if is_virtualenv_directory_exists():
         exclude_paths.append(get_virtualenv_directory())
 
     create_from_template(
@@ -313,7 +313,7 @@ def add_vulture_config() -> None:
     git_commit("Add vulture config")
 
 
-def _is_virtualenv_directory_exists() -> bool:
+def is_virtualenv_directory_exists() -> bool:
     return Path(get_virtualenv_directory()).exists()
 
 
