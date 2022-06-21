@@ -218,15 +218,15 @@ def _create_envrc() -> None:
 
 
 def _ignore_envrc() -> None:
-    _ex(".envrc", b"g/^#/d\n$\nd\nw\n")
-    _ex(".gitignore", b"/^# Environments\n/^$\ni\n.envrc\n.\nw\n")
+    _ex(".envrc", "g/^#/d\n$\nd\nw\n")
+    _ex(".gitignore", "/^# Environments\n/^$\ni\n.envrc\n.\nw\n")
 
     _git_add([".gitignore"])
     _git_commit("Ignore .envrc")
 
 
-def _ex(filepath: str, script: bytes) -> None:
-    run(["ex", "-", filepath], input=script)
+def _ex(filepath: str, script: str) -> None:
+    run(["ex", "-", filepath], input=script.encode())
 
 
 def _create_an_empty_module() -> None:
@@ -309,7 +309,28 @@ def _create_tests_directory() -> None:
 
 def _install_pre_commit() -> None:
     _create_from_template("python/pre-commit")
-    _git_add([".pre-commit-config.yaml"])
+
+    exclude_tests = "\n".join(
+        [
+            "/id: bandit",
+            "a",
+            "        exclude: |",
+            "          (?x)(",
+            "            tests/",
+            "          )",
+            ".",
+            "w",
+            "",
+        ]
+    )
+    _ex(".pre-commit-config.yaml", exclude_tests)
+
+    _ex(
+        "pyproject.toml",
+        '/tool.vulture\n/paths\na\nexclude = [".venv/"]\n.\nw\n',
+    )
+
+    _git_add([".pre-commit-config.yaml", "pyproject.toml"])
     _git_commit("Add pre-commit config")
 
     run(["pre-commit", "install"])
