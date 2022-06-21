@@ -310,6 +310,18 @@ def _create_tests_directory() -> None:
 def _install_pre_commit() -> None:
     _create_from_template("python/pre-commit")
 
+    _exclude_tests_dir_in_bandit()
+
+    if Path(_get_default_venv_dir()).exists():
+        _exclude_venv_dir_in_vulture()
+
+    _git_add([".pre-commit-config.yaml", "pyproject.toml"])
+    _git_commit("Add pre-commit config")
+
+    run(["pre-commit", "install"])
+
+
+def _exclude_tests_dir_in_bandit() -> None:
     exclude_tests = "\n".join(
         [
             "/id: bandit",
@@ -325,15 +337,12 @@ def _install_pre_commit() -> None:
     )
     _ex(".pre-commit-config.yaml", exclude_tests)
 
+
+def _exclude_venv_dir_in_vulture() -> None:
     _ex(
         "pyproject.toml",
         '/tool.vulture\n/paths\na\nexclude = [".venv/"]\n.\nw\n',
     )
-
-    _git_add([".pre-commit-config.yaml", "pyproject.toml"])
-    _git_commit("Add pre-commit config")
-
-    run(["pre-commit", "install"])
 
 
 def _cleanup() -> None:
