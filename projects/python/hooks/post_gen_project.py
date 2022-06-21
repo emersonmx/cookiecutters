@@ -72,30 +72,7 @@ def create_readme() -> None:
 
 
 def get_project_name() -> str:
-    config = get_config()
-    return config["project_name"]
-
-
-@cache
-def get_config() -> dict:
-    config_data = load_config_json()
-    project_name = config_data["project_name"]
-    project_slug = make_project_slug(project_name)
-    return {
-        "project_name": project_name,
-        "project_slug": project_slug,
-        "package_manager": config_data["package_manager"],
-    }
-
-
-def load_config_json() -> dict:
-    with open("cookiecutter_configs.json") as f:
-        return json.load(f)
-
-
-def make_project_slug(project_name: str) -> str:
-    translations = str.maketrans({" ": "_", "-": "_"})
-    return project_name.lower().translate(translations)
+    return "{{ cookiecutter.project_name }}"
 
 
 def git_add(files: list[str]) -> None:
@@ -136,8 +113,7 @@ def is_using_poetry() -> bool:
 
 
 def get_package_manager() -> str:
-    config = get_config()
-    return config["package_manager"]
+    return "{{ cookiecutter.package_manager }}"
 
 
 def create_virtualenv_with_poetry() -> None:
@@ -269,8 +245,12 @@ def create_an_empty_module() -> None:
 
 
 def get_project_slug() -> str:
-    config = get_config()
-    return config["project_slug"]
+    return make_project_slug(get_project_name())
+
+
+def make_project_slug(project_name: str) -> str:
+    translations = str.maketrans({" ": "_", "-": "_"})
+    return project_name.lower().translate(translations)
 
 
 def add_isort_config() -> None:
@@ -365,7 +345,7 @@ def install_pre_commit() -> None:
 
 def cleanup() -> None:
     Path("install_devdeps.py").unlink(missing_ok=True)
-    Path("cookiecutter_configs.json").unlink(missing_ok=True)
+    Path("cookiecutter_empty").unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

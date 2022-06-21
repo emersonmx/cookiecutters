@@ -1,4 +1,0 @@
-{
-    "project_name": "{{ cookiecutter.project_name }}",
-    "package_manager": "{{ cookiecutter.package_manager }}"
-}
