@@ -298,10 +298,16 @@ def add_mypy_config() -> None:
 
 
 def add_vulture_config() -> None:
-    create_from_template("python/vulture")
-
+    exclude_paths = []
     if _is_virtualenv_directory_exists():
-        _exclude_virtualenv_directory_in_vulture_config()
+        exclude_paths.append(get_virtualenv_directory())
+
+    create_from_template(
+        "python/vulture",
+        {
+            "exclude_paths": json.dumps(exclude_paths),
+        },
+    )
 
     git_add(["pyproject.toml"])
     git_commit("Add vulture config")
@@ -309,13 +315,6 @@ def add_vulture_config() -> None:
 
 def _is_virtualenv_directory_exists() -> bool:
     return Path(get_virtualenv_directory()).exists()
-
-
-def _exclude_virtualenv_directory_in_vulture_config() -> None:
-    run_ex(
-        "pyproject.toml",
-        '/tool.vulture\n/paths\na\nexclude = [".venv/"]\n.\nw\n',
-    )
 
 
 def add_run_task() -> None:
@@ -358,29 +357,10 @@ def create_tests_directory() -> None:
 def install_pre_commit() -> None:
     create_from_template("python/pre-commit")
 
-    _exclude_tests_directory_in_bandit_hook()
-
     git_add([".pre-commit-config.yaml", "pyproject.toml"])
     git_commit("Add pre-commit config")
 
     run(["pre-commit", "install"])
-
-
-def _exclude_tests_directory_in_bandit_hook() -> None:
-    exclude_tests = "\n".join(
-        [
-            "/id: bandit",
-            "a",
-            "        exclude: |",
-            "          (?x)(",
-            "            tests/",
-            "          )",
-            ".",
-            "w",
-            "",
-        ]
-    )
-    run_ex(".pre-commit-config.yaml", exclude_tests)
 
 
 def cleanup() -> None:
