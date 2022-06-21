@@ -1,3 +1,6 @@
 {
-    "path": "path"
+    "path": "path",
+    "bandit": {
+        "exclude": "tests/"
+    }
 }
