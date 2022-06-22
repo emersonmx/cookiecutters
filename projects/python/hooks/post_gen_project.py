@@ -25,7 +25,7 @@ def main() -> int:
 
     add_editorconfig()
     create_envrc()
-    ignore_envrc()
+    add_envrc_to_gitignore()
     create_an_empty_module()
     add_isort_config()
     add_black_config()
@@ -136,12 +136,12 @@ def get_poetry_virtualenv_bin_directory() -> str:
 def get_poetry_virtualenv_directory() -> str:
     output = run(["poetry", "env", "info", "--path"], capture_output=True)
     venv_dir: str = output.stdout.decode().strip()  # type: ignore
-    if is_pointing_to_local_venv(venv_dir):
+    if is_pointing_to_local_virtualenv(venv_dir):
         return get_virtualenv_directory()
     return venv_dir
 
 
-def is_pointing_to_local_venv(virtualenv_dir: str) -> bool:
+def is_pointing_to_local_virtualenv(virtualenv_dir: str) -> bool:
     default_venv_dir = get_virtualenv_directory()
     current_dir = Path().absolute()
     return str(current_dir / default_venv_dir) == virtualenv_dir
@@ -157,11 +157,12 @@ def add_directory_to_environment_path(directory: str) -> None:
 
 def create_virtualenv_with_venv() -> None:
     run(["python", "-m", "venv", get_virtualenv_directory()])
-    add_directory_to_environment_path(get_venv_bin_directory())
+    venv_bin_dir = get_virtualenv_bin_directory()
+    add_directory_to_environment_path(venv_bin_dir)
     run(["pip", "install", "--upgrade", "pip"])
 
 
-def get_venv_bin_directory() -> str:
+def get_virtualenv_bin_directory() -> str:
     venv_dir = get_virtualenv_directory()
     return str((Path(venv_dir) / "bin").absolute())
 
@@ -224,7 +225,7 @@ def create_envrc() -> None:
     create_from_template("python/direnv", {"venv_path": venv_path})
 
 
-def ignore_envrc() -> None:
+def add_envrc_to_gitignore() -> None:
     run_ex(".gitignore", "/^# Environments\n/^$\ni\n.envrc\n.\nw\n")
     git_add([".gitignore"])
     git_commit("Ignore .envrc")
@@ -335,7 +336,10 @@ def create_tests_directory() -> None:
 
 
 def install_pre_commit() -> None:
-    create_from_template("python/pre-commit")
+    create_from_template(
+        "python/pre-commit",
+        {"bandit": {"exclude": "tests/"}},
+    )
 
     git_add([".pre-commit-config.yaml", "pyproject.toml"])
     git_commit("Add pre-commit config")
