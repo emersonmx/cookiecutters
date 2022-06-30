@@ -4,8 +4,8 @@ from functools import cache, partial
 from os import environ as env
 from pathlib import Path
 from typing import Any
+from urllib.request import Request, urlopen
 
-import requests
 from cookiecutter.config import get_user_config as get_cookiecutter_config
 from cookiecutter.main import cookiecutter
 
@@ -96,9 +96,11 @@ def create_gitignore() -> None:
 
 
 def get_gitignore_data() -> str:
-    response = requests.get("https://www.gitignore.io/api/python")
-    response.raise_for_status()
-    return response.text
+    gitignore_url = "https://www.gitignore.io/api/python"
+    headers = {"user-agent": "Mozilla/5.0"}
+    request = Request(gitignore_url, headers=headers)
+    with urlopen(request) as response:
+        return response.read().decode()  # type: ignore
 
 
 def create_virtualenv() -> None:

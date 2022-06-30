@@ -24,7 +24,6 @@ cookiecutter \
 - The responsibility for modifying the language templates rests with the
   project templates.
 - Use python to write the hooks.
-- Use only the standard, requests and cookiecutter libraries to write the
-  hooks.
+- Use only the standard and cookiecutter libraries to write the hooks.
 - A project MUST USE tools to help development (git, devdeps, pre-commit, etc).
 - Templates MUST FOLLOW good design decisions (use tests, dev tools, etc).
