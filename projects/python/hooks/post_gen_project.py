@@ -158,10 +158,9 @@ def add_directory_to_environment_path(directory: str) -> None:
 
 
 def create_virtualenv_with_venv() -> None:
-    run(["python", "-m", "venv", get_virtualenv_directory()])
+    run(["python", "-m", "venv", "--upgrade-deps", get_virtualenv_directory()])
     venv_bin_dir = get_virtualenv_bin_directory()
     add_directory_to_environment_path(venv_bin_dir)
-    run(["pip", "install", "--upgrade", "pip"])
 
 
 def get_virtualenv_bin_directory() -> str:
