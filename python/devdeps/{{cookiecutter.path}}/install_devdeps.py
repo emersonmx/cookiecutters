@@ -61,7 +61,6 @@ def _get_packages() -> list:
 
 def _install_with_pip() -> None:
     packages = _get_packages()
-    run(["pip", "install", "--upgrade", "pip"])
     run(["pip", "install", "--upgrade", *packages])
 
 
