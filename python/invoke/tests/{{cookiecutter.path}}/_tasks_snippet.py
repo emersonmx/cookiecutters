@@ -18,10 +18,10 @@ def tests(c, quiet=False):
             *pytest_options,
         ],
     )
-    c.run(cmd, pty=True)
+    c.run(cmd)
 
 
 @task
 def coverage(c):
     # type: (Context) -> None
-    c.run("coverage report", pty=True)
+    c.run("coverage report")

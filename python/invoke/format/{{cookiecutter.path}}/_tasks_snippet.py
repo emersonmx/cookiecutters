@@ -21,7 +21,7 @@ def format(c, all_files=False):
     ]
     for hook in hooks:
         cmd = " ".join(["pre-commit", "run", *precommit_options, hook])
-        c.run(cmd, pty=True)
+        c.run(cmd)
 {%- else %}
 def format(c):
     # type: (Context) -> None
