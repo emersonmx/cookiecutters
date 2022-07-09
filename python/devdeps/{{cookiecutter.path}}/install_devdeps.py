@@ -54,8 +54,6 @@ def _get_packages() -> list:
         "mypy",
         "vulture",
         "bandit",
-        # stubs
-        "types-all",
     ]
 
 
