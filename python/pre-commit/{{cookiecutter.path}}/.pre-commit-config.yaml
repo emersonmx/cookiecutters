@@ -36,7 +36,6 @@ repos:
         entry: isort
         require_serial: true
         language: python
-        language_version: python3
         types_or: [cython, pyi, python]
         args: ["--filter-files"]
 
@@ -44,7 +43,6 @@ repos:
         name: black
         entry: black
         language: python
-        minimum_pre_commit_version: 2.9.2
         require_serial: true
         types_or: [python, pyi]
 
@@ -74,6 +72,5 @@ repos:
         name: bandit
         entry: bandit
         language: python
-        language_version: python3
         types: [python]
         exclude: "{{ cookiecutter.bandit.exclude }}"
