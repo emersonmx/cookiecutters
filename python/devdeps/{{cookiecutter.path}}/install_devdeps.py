@@ -32,7 +32,7 @@ def _install_with_poetry() -> None:
     run(["poetry", "add", "-D", *packages])
 
 
-def _get_packages() -> list:
+def _get_packages() -> list[str]:
     args = _get_args()
     return [
         # tools
