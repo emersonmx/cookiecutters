@@ -43,6 +43,7 @@ def _get_packages() -> list:
         "invoke",
         *(["pre-commit"] if args.pre_commit else []),
         # code quality
+        "pre-commit-hooks",
         "pyupgrade",
         "add-trailing-comma",
         "yesqa",
