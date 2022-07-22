@@ -1,17 +1,56 @@
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v4.3.0"
-    hooks:
-      - id: check-added-large-files
-      - id: check-merge-conflict
-      - id: debug-statements
-      - id: detect-private-key
-      - id: end-of-file-fixer
-      - id: name-tests-test
-      - id: trailing-whitespace
-
   - repo: local
     hooks:
+      - id: check-ast
+        name: check python ast
+        entry: check-ast
+        language: python
+        types: [python]
+
+      - id: debug-statements
+        name: debug statements (python)
+        entry: debug-statement-hook
+        language: python
+        types: [python]
+
+      - id: trailing-whitespace
+        name: trim trailing whitespace
+        entry: trailing-whitespace-fixer
+        language: python
+        types: [text]
+        stages: [commit, push, manual]
+
+      - id: end-of-file-fixer
+        name: fix end of files
+        entry: end-of-file-fixer
+        language: python
+        types: [text]
+        stages: [commit, push, manual]
+
+      - id: name-tests-test
+        name: python tests naming
+        entry: name-tests-test
+        language: python
+        files: (^|/)tests/.+\.py$
+
+      - id: check-merge-conflict
+        name: check for merge conflicts
+        entry: check-merge-conflict
+        language: python
+        types: [text]
+
+      - id: check-added-large-files
+        name: check for added large files
+        entry: check-added-large-files
+        language: python
+        stages: [commit, push, manual]
+
+      - id: detect-private-key
+        name: detect private key
+        entry: detect-private-key
+        language: python
+        types: [text]
+
       - id: pyupgrade
         name: pyupgrade
         entry: pyupgrade
