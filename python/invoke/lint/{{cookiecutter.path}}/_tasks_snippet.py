@@ -11,11 +11,12 @@ def lint(c, all_files=False):
         precommit_options.append("--all-files")
 
     hooks = [
-        "check-added-large-files",
-        "check-merge-conflict",
+        "check-ast",
         "debug-statements",
-        "detect-private-key",
         "name-tests-test",
+        "check-merge-conflict",
+        "check-added-large-files",
+        "detect-private-key",
         "flake8",
         "mypy",
         "vulture",

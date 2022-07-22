@@ -11,8 +11,8 @@ def format(c, all_files=False):
         precommit_options.append("--all-files")
 
     hooks = [
-        "end-of-file-fixer",
         "trailing-whitespace",
+        "end-of-file-fixer",
         "pyupgrade",
         "add-trailing-comma",
         "yesqa",
