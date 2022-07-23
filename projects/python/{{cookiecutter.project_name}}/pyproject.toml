@@ -9,7 +9,6 @@ python = "{{ cookiecutter.python_version }}"
 
 [tool.poetry.dev-dependencies]
 pytest = ""
-hypothesis = ""
 coverage = ""
 ipdb = ""
 invoke = ""
