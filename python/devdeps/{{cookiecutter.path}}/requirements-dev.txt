@@ -13,5 +13,6 @@ flake8
 flake8-print
 pep8-naming
 mypy
+types-invoke
 vulture
 bandit
