@@ -25,6 +25,15 @@ def format(c, all_files=False):
 {%- else %}
 def format(c):
     # type: (Context) -> None
-    c.run("isort .")
-    c.run("black .")
+    all_files = get_files(c, ".")
+    py_files = get_files(c, "*.py")
+    ipy_files = get_files(c, "*.ipy")
+
+    c.run(f"trailing-whitespace-fixer {all_files}")
+    c.run(f"end-of-file-fixer {all_files}")
+    c.run(f"pyupgrade --py310-plus {py_files}")
+    c.run(f"add-trailing-comma {py_files}")
+    c.run(f"yesqa {py_files}")
+    c.run(f"isort --filter-files {py_files} {ipy_files}".strip())
+    c.run(f"black {py_files} {ipy_files}".strip())
 {%- endif %}
