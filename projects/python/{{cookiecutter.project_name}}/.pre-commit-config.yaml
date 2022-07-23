@@ -111,4 +111,4 @@ repos:
         entry: bandit
         language: python
         types: [python]
-        exclude: "{{ cookiecutter.bandit.exclude }}"
+        exclude: "tests/"
