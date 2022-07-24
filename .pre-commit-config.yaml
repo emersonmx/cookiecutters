@@ -98,16 +98,3 @@ repos:
         language: python
         types_or: [python, pyi]
         require_serial: true
-
-      - id: vulture
-        name: vulture
-        language: python
-        entry: vulture
-        types: [python]
-        require_serial: true
-
-      - id: bandit
-        name: bandit
-        entry: bandit
-        language: python
-        types: [python]

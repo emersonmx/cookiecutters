@@ -25,8 +25,6 @@ flake8-print = "^5.0.0"
 pep8-naming = "^0.13.1"
 mypy = "^0.971"
 types-invoke = "^1.7.3"
-vulture = "^2.5"
-bandit = "^1.7.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -61,6 +59,3 @@ warn_unused_ignores = true
 [[tool.mypy.overrides]]
 module = "cookiecutter.*"
 ignore_missing_imports = true
-
-[tool.vulture]
-min_confidence = 100
