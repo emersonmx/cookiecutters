@@ -1,4 +1,9 @@
 {
     "path": "path",
+    "debugger": [
+        "pudb",
+        "ipdb",
+        "pdb"
+    ],
     "venv_path": ".venv"
 }
