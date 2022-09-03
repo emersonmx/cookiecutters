@@ -1,4 +1,5 @@
 pytest
+pytest-randomly
 coverage
 ipdb
 invoke
