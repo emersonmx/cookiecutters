@@ -1,4 +1,4 @@
-from invoke import Context
+from invoke import Context, task
 
 
 def get_files(c: Context, file: str, exclude: str = "") -> str:
