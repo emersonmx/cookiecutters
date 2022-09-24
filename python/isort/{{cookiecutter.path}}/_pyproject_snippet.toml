@@ -1,4 +1,4 @@
 [tool.isort]
 profile = "black"
-line_length = 80
+line_length = 79
 multi_line_output = 3
