@@ -61,12 +61,6 @@ repos:
         language: python
         types: [python]
 
-      - id: name-tests-test
-        name: python tests naming
-        entry: name-tests-test
-        language: python
-        files: (^|/)tests/.+\.py$
-
       - id: check-merge-conflict
         name: check for merge conflicts
         entry: check-merge-conflict
