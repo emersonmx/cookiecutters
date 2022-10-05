@@ -1,0 +1,7 @@
+{%- set builder = cookiecutter._builders[cookiecutter.builder] -%}
+{%- set requires = builder.requires -%}
+{%- set backend = builder.backend -%}
+
+[build-system]
+requires = ["{{ requires | join('\", \"') }}"]
+build-backend = "{{ backend }}"
