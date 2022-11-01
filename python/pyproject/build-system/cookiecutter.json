@@ -3,7 +3,7 @@
     "builder": ["setuptools", "hatch"],
     "_builders": {
         "setuptools": {
-            "requires": ["setuptools>=61.0"],
+            "requires": ["setuptools"],
             "backend": "setuptools.build_meta"
         },
         "hatch": {
