@@ -1,0 +1,7 @@
+
+[project.optional-dependencies]
+dev = [
+{%- for dependency in cookiecutter._dependencies %}
+    "{{ dependency }}",
+{%- endfor %}
+]

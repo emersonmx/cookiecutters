@@ -1,3 +1,25 @@
 {
-    "path": "path"
+    "path": "path",
+    "format": ["requirements", "pyproject"],
+    "_dependencies": [
+        "pytest",
+        "pytest-randomly",
+        "coverage",
+        "ipdb",
+        "invoke",
+        "pre-commit",
+        "pre-commit-hooks",
+        "pyupgrade",
+        "add-trailing-comma",
+        "yesqa",
+        "isort",
+        "black",
+        "flake8",
+        "flake8-print",
+        "pep8-naming",
+        "mypy",
+        "types-invoke",
+        "vulture",
+        "bandit"
+    ]
 }
