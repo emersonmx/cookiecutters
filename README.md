@@ -17,6 +17,14 @@ cookiecutter \
     path=$PWD
 ```
 
+```sh
+# cocu: https://github.com/emersonmx/dotfiles/blob/main/dot_local/bin/executable_cocu
+virtualenv .venv \
+    && git init \
+    && cocu \
+        python/{devdeps,direnv,editorconfig,pre-commit,pyproject/build-system,isort,black,flake8,mypy,vulture}
+```
+
 ## Design Decisions
 
 - Language templates MUST BE bricks to build a project template.
