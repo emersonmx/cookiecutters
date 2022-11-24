@@ -3,7 +3,7 @@
     "builder": ["setuptools", "hatch"],
     "_builders": {
         "setuptools": {
-            "requires": ["setuptools"],
+            "requires": ["setuptools", "setuptools-scm"],
             "backend": "setuptools.build_meta"
         },
         "hatch": {
