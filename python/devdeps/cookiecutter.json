@@ -1,6 +1,6 @@
 {
     "path": "path",
-    "format": ["requirements", "pyproject"],
+    "format": ["pyproject", "requirements"],
     "_dependencies": [
         "pytest",
         "pytest-randomly",
