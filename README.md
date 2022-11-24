@@ -5,7 +5,7 @@
 ```sh
 # Create a python template into current project
 cookiecutter \
-    --directory=python/direnv \
+    --directory python/direnv \
     https://github.com/emersonmx/cookiecutters.git \
     path=$PWD
 ```
