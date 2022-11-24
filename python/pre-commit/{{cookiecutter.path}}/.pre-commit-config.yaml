@@ -20,7 +20,7 @@ repos:
         entry: pyupgrade
         language: python
         types: [python]
-        args: ["--py310-plus"]
+        args: ["--py311-plus"]
 
       - id: add-trailing-comma
         name: Add trailing commas
