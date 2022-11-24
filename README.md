@@ -12,14 +12,6 @@ cookiecutter \
 
 ```sh
 # Create a python project
-# With cocu: https://github.com/emersonmx/dotfiles/blob/main/dot_local/bin/executable_cocu
-virtualenv .venv \
-    && git init \
-    && cocu \
-        python/{direnv,editorconfig,build-system,project-setup,devdeps,pre-commit,isort,black,flake8,mypy,vulture} \
-        --context project_name=$(basename $PWD)
-
-# Without cocu
 virtualenv .venv \
     && git init \
     && echo \
