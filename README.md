@@ -1,13 +1,6 @@
 # cookiecutters
 
-## Example
-
-```sh
-# Create a python project
-cookiecutter \
-    --directory=projects/python \
-    https://github.com/emersonmx/cookiecutters.git
-```
+## Examples
 
 ```sh
 # Create a python template into current project
@@ -18,11 +11,13 @@ cookiecutter \
 ```
 
 ```sh
+# Create a python project using cocu
 # cocu: https://github.com/emersonmx/dotfiles/blob/main/dot_local/bin/executable_cocu
 virtualenv .venv \
     && git init \
     && cocu \
-        python/{devdeps,direnv,editorconfig,pre-commit,pyproject/build-system,isort,black,flake8,mypy,vulture}
+        python/{direnv,editorconfig,build-system,project-setup,devdeps,pre-commit,isort,black,flake8,mypy,vulture} \
+        --context project_name=$(basename $PWD) format=pyproject debugger=ipdb
 ```
 
 ## Design Decisions
