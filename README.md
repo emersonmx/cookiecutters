@@ -17,7 +17,7 @@ virtualenv .venv \
     && git init \
     && cocu \
         python/{direnv,editorconfig,build-system,project-setup,devdeps,pre-commit,isort,black,flake8,mypy,vulture} \
-        --context project_name=$(basename $PWD) format=pyproject debugger=ipdb
+        --context project_name=$(basename $PWD)
 ```
 
 ## Design Decisions
