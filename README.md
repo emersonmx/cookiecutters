@@ -8,9 +8,7 @@ cookiecutter \
     --directory python/direnv \
     https://github.com/emersonmx/cookiecutters.git \
     path=$PWD
-```
 
-```sh
 # Create a python project
 virtualenv .venv \
     && git init \
