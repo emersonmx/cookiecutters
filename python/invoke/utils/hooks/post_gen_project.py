@@ -1,10 +1,9 @@
 from pathlib import Path
-from subprocess import CalledProcessError
 
 
 def apply_snippet() -> None:
     snippet_path = Path("_tasks_snippet.py")
-    with open(snippet_path, "r") as f:
+    with open(snippet_path) as f:
         snippet = f.readlines()
 
     tasks_path = Path("tasks.py")
@@ -17,10 +16,7 @@ def apply_snippet() -> None:
 
 
 def main() -> int:
-    try:
-        apply_snippet()
-    except CalledProcessError:
-        return 1
+    apply_snippet()
     return 0
 
 

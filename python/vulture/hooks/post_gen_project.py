@@ -1,5 +1,4 @@
 from pathlib import Path
-from subprocess import CalledProcessError
 
 
 def apply_snippet() -> None:
@@ -17,10 +16,7 @@ def apply_snippet() -> None:
 
 
 def main() -> int:
-    try:
-        apply_snippet()
-    except CalledProcessError:
-        return 1
+    apply_snippet()
     return 0
 
 

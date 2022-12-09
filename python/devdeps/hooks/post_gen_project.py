@@ -1,5 +1,4 @@
 from pathlib import Path
-from subprocess import CalledProcessError
 
 
 def get_snippet_path() -> Path:
@@ -37,13 +36,10 @@ def setup_pyproject() -> None:
 
 def main() -> int:
     format = "{{ cookiecutter.format }}".strip().lower()
-    try:
-        if format == "requirements":
-            setup_requirements()
-        else:
-            setup_pyproject()
-    except CalledProcessError:
-        return 1
+    if format == "requirements":
+        setup_requirements()
+    else:
+        setup_pyproject()
     return 0
 
 
