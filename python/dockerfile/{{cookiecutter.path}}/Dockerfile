@@ -1,32 +1,24 @@
 FROM python:{{ cookiecutter.docker_image_tag }} as base
 
-ENV USER=appuser
-ENV HOME=/home/$USER
-ENV VIRTUAL_ENV=$HOME/venv
+RUN useradd --shell /bin/bash --create-home python
+
+WORKDIR /home/python
+USER python
+
+ENV VIRTUAL_ENV=/home/python/venv
+RUN python -m venv $VIRTUAL_ENV
+
 ENV PATH=$VIRTUAL_ENV/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONOPTIMIZE=1 \
     PYTHONUNBUFFERED=1
 
-RUN useradd --create-home $USER
-USER $USER
-
-WORKDIR $HOME
-
-
-FROM base as build
-
-RUN python -m venv $VIRTUAL_ENV
+RUN mkdir code/
+WORKDIR code
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-
-FROM base as app
-
-WORKDIR $HOME/app
-
-COPY --chown=$USER:$USER --from=build $VIRTUAL_ENV $VIRTUAL_ENV
-COPY --chown=$USER:$USER . $HOME/app
+COPY --chown=python . .
 
 CMD ["python", "main.py"]
