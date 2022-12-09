@@ -35,8 +35,8 @@ def setup_pyproject() -> None:
 
 
 def main() -> int:
-    format = "{{ cookiecutter.format }}".strip().lower()
-    if format == "requirements":
+    output = "{{ cookiecutter.format }}".strip().lower()
+    if output == "requirements":
         setup_requirements()
     else:
         setup_pyproject()
