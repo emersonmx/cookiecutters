@@ -3,6 +3,9 @@
 ## Examples
 
 ```sh
+# Install cookiecutter
+python3 -m pip install --user cookiecutter
+
 # Create a python template into current project
 cookiecutter \
     --directory python/direnv \
@@ -10,17 +13,17 @@ cookiecutter \
     path=$PWD
 
 # Create a python project
-virtualenv .venv \
-    && git init \
-    && echo \
-        python/{direnv,editorconfig,build-system,project-setup,devdeps,pre-commit,isort,black,flake8,mypy,vulture} \
-            | xargs -d' ' -I {} \
-                cookiecutter \
-                    -f \
-                    --no-input \
-                    https://github.com/emersonmx/cookiecutters.git \
-                    --directory {} \
-                    path=$PWD project_name=$(basename $PWD)
+python -m venv .venv
+git init
+echo \
+    python/{direnv,editorconfig,build-system,project-setup,devdeps,pre-commit,isort,black,flake8,mypy,vulture} \
+        | xargs -d' ' -I {} \
+            cookiecutter \
+                -f \
+                --no-input \
+                https://github.com/emersonmx/cookiecutters.git \
+                --directory {} \
+                path=$PWD project_name=$(basename $PWD)
 ```
 
 ## Design Decisions
