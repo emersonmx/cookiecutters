@@ -17,7 +17,8 @@ python -m venv .venv
 git init
 echo \
     python/{direnv,editorconfig,build-system,project-setup,devdeps,pre-commit,isort,black,flake8,mypy,vulture} \
-        | xargs -d' ' -I {} \
+        | tr ' ' '\n' \
+        | xargs -I {} \
             cookiecutter \
                 -f \
                 --no-input \
