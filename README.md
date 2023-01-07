@@ -24,7 +24,7 @@ echo \
                 --no-input \
                 https://github.com/emersonmx/cookiecutters.git \
                 --directory {} \
-                path=$PWD project_name=$(basename $PWD)
+                path=. project_name=$(basename $PWD)
 ```
 
 ## Design Decisions
