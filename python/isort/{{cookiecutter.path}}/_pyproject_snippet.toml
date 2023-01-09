@@ -1,4 +1,4 @@
 [tool.isort]
 profile = "black"
-line_length = 79
+line_length = {{ cookiecutter.line_length }}
 multi_line_output = 3
