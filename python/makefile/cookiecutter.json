@@ -1,0 +1,5 @@
+{
+    "path": "path",
+    "package_manager": ["pip-tools", "pip"],
+    "venv_path": ".venv"
+}
