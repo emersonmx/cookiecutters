@@ -24,7 +24,7 @@ requirements.txt: $(VENV_DIR) pyproject.toml
 		pyproject.toml
 
 .PHONY: piptools-sync
-piptools-sync: requirements.txt
+piptools-sync: $(VENV_DIR)
 	python -m piptools sync requirements.txt
 {%- elif cookiecutter.package_manager == "pip" %}
 
