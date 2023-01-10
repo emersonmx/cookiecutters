@@ -5,7 +5,7 @@ PATH := $(VIRTUAL_ENV)/bin:$(PATH)
 
 .PHONY: setup
 {%- if cookiecutter.package_manager == "pip-tools" %}
-setup: pip-sync
+setup: piptools-sync
 {%- elif cookiecutter.package_manager == "pip" %}
 setup: pip-install
 {%- endif %}
@@ -16,15 +16,15 @@ $(VENV_DIR):
 {%- if cookiecutter.package_manager == "pip-tools" %}
 	python -m pip install pip-tools
 
-.PHONY: pip-compile
-pip-compile: $(VENV_DIR)
+.PHONY: piptools-compile
+piptools-compile: $(VENV_DIR)
 	python -m piptools compile \
 		--generate-hashes \
 		-o requirements.txt \
 		pyproject.toml
 
-.PHONY: pip-sync
-pip-sync: $(VENV_DIR)
+.PHONY: piptools-sync
+piptools-sync: $(VENV_DIR)
 	python -m piptools sync requirements.txt
 {%- elif cookiecutter.package_manager == "pip" %}
 
