@@ -15,17 +15,16 @@ $(VENV_DIR):
 	python -m venv $@
 {%- if cookiecutter.package_manager == "pip-tools" %}
 	python -m pip install pip-tools
-
-.PHONY: piptools-compile
-piptools-compile: $(VENV_DIR)
+		
+requirements.txt: $(VENV_DIR)
 	python -m piptools compile \
 		--quiet \
 		--generate-hashes \
-		-o requirements.txt \
+		-o $@ \
 		pyproject.toml
 
 .PHONY: piptools-sync
-piptools-sync: $(VENV_DIR)
+piptools-sync: requirements.txt
 	python -m piptools sync requirements.txt
 {%- elif cookiecutter.package_manager == "pip" %}
 
