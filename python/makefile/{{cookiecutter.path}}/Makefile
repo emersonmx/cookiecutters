@@ -11,10 +11,9 @@ setup: pip-install
 {%- endif %}
 
 $(VENV_DIR):
-	@PATH="${_OLD_PATH}"
+	PATH="$(_OLD_PATH)" \
 	python -m venv $@
 {%- if cookiecutter.package_manager == "pip-tools" %}
-	@PATH="${VIRTUAL_ENV}/bin:${PATH}"
 	python -m pip install pip-tools
 
 .PHONY: pip-compile
