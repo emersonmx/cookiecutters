@@ -16,7 +16,7 @@ $(VENV_DIR):
 {%- if cookiecutter.package_manager == "pip-tools" %}
 	python -m pip install pip-tools
 		
-requirements.txt: $(VENV_DIR)
+requirements.txt: $(VENV_DIR) pyproject.toml
 	python -m piptools compile \
 		--quiet \
 		--generate-hashes \
