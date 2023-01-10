@@ -10,13 +10,16 @@ setup: piptools-sync
 setup: pip-install
 {%- endif %}
 
+.PHONY: venv
+venv: $(VENV_DIR)
+
 $(VENV_DIR):
 	PATH="$(_OLD_PATH)" \
 	python -m venv $@
 {%- if cookiecutter.package_manager == "pip-tools" %}
 	python -m pip install pip-tools
 		
-requirements.txt: $(VENV_DIR) pyproject.toml
+requirements.txt: venv pyproject.toml
 	python -m piptools compile \
 		--quiet \
 		--generate-hashes \
@@ -24,17 +27,17 @@ requirements.txt: $(VENV_DIR) pyproject.toml
 		pyproject.toml
 
 .PHONY: piptools-sync
-piptools-sync: $(VENV_DIR)
+piptools-sync: venv
 	python -m piptools sync requirements.txt
 {%- elif cookiecutter.package_manager == "pip" %}
 
 .PHONY: pip-install
-pip-install: $(VENV_DIR)
+pip-install: venv
 	pip install -r requirements.txt
 {%- endif %}
 
 .PHONY: run
-run: $(VENV_DIR)
+run: venv
 	python main.py
 
 .PHONY: clean
