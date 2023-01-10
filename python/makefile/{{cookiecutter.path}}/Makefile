@@ -19,6 +19,7 @@ $(VENV_DIR):
 .PHONY: piptools-compile
 piptools-compile: $(VENV_DIR)
 	python -m piptools compile \
+		--quiet \
 		--generate-hashes \
 		-o requirements.txt \
 		pyproject.toml
