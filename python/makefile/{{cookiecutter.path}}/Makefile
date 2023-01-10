@@ -37,7 +37,11 @@ pip-install: venv
 {%- endif %}
 
 .PHONY: run
-run: venv
+{%- if cookiecutter.package_manager == "pip-tools" %}
+run: piptools-sync
+{%- elif cookiecutter.package_manager == "pip" %}
+run: pip-install
+{%- endif %}
 	python main.py
 
 .PHONY: clean
