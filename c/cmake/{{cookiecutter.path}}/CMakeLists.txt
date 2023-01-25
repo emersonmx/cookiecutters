@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14...3.25)
 
 project(
-  {{cookiecutter.path}}
+  example
   VERSION 0.1
   DESCRIPTION "Add description"
   LANGUAGES C)
